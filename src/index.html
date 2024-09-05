@@ -10,15 +10,17 @@
 
    <title>Teachinder</title>
 
-
-   <p class="source-name">Teachinder</p>
+   <div class="section-with-border">
+   <hi class="source-name">Teachinder</hi>
 
    <div class="search-container">
       <input type="text" placeholder="Name, note or age to search">
       <button>Search</button>
    </div>
 
-   <div class="section-with-border">
+   </div>
+
+      <div class="one-line">
    <nav>
       <a class="menu" href="#">Teachers</a>
       <a class="menu" href="#">Statistics</a>
@@ -27,8 +29,9 @@
    </nav>
 
    <button class="button-add-teacher">Add teacher</button>
+      </div>
 
-   </div>
+
 
    <hr>
 
@@ -71,45 +74,60 @@
          </div>
       </div>
 
+      <!-- grid with list of teachers (their short cards) -->
       <div class="teachers-grid">
          <div class="teacher-card">
-            <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk">
+
+            <div class="image-container">
+            <img src="/src/images/teacher1.jpg" alt="Ihor Tkachuk">
             <div class="star">★</div>
-            <p>Ihor Tkachuk</p>
-            <p>Chemistry</p>
-            <p>Ukraine</p>
+            </div>
+
+            <p class="teacher-name">Ihor</p>
+            <p class="teacher-name">Tkachuk</p>
+            <p class="teacher-speciality">Chemistry</p>
+            <p class="teacher-country">Ukraine</p>
          </div>
          <div class="teacher-card">
             <img src="https://via.placeholder.com/80" alt="Pragg Rameshbabu">
-            <p>Pragg Rameshbabu</p>
-            <p>Chess</p>
-            <p>India</p>
+            <p class="teacher-name">Pragg</p>
+            <p class="teacher-name">Rameshbabu</p>
+            <p class="teacher-speciality">Chess</p>
+            <p class="teacher-country">India</p>
          </div>
          <div class="teacher-card">
-            <img src="https://via.placeholder.com/80" alt="Floor Jansen">
-            <div class="star">★</div>
-            <p>Floor Jansen</p>
-            <p>Vocal</p>
-            <p>Denmark</p>
+            <div class="image-container">
+               <img src="https://via.placeholder.com/80" alt="Floor Jansen">
+               <div class="star">★</div>
+            </div>
+            <p class="teacher-name">Floor</p>
+            <p class="teacher-name">Jansen</p>
+            <p class="teacher-speciality">Vocal</p>
+            <p class="teacher-country">Denmark</p>
          </div>
          <div class="teacher-card">
             <img src="https://via.placeholder.com/80" alt="John Burke">
-            <p>John Burke</p>
-            <p>Computer Science</p>
-            <p>Belgium</p>
+            <p class="teacher-name">John</p>
+            <p class="teacher-name">Burke</p>
+            <p class="teacher-speciality">Computer Science</p>
+            <p class="teacher-country">Belgium</p>
          </div>
          <div class="teacher-card">
-            <img src="https://via.placeholder.com/80" alt="Ari Tang">
-            <div class="star">★</div>
-            <p>Ari Tang</p>
-            <p>Biology</p>
-            <p>China</p>
+            <div class="image-container">
+               <img src="https://via.placeholder.com/80" alt="Ari Tang ">
+               <div class="star">★</div>
+            </div>
+            <p class="teacher-name">Ari</p>
+            <p class="teacher-name">Tang</p>
+            <p class="teacher-speciality">Biology</p>
+            <p class="teacher-country">China</p>
          </div>
          <div class="teacher-card">
             <img src="https://via.placeholder.com/80" alt="Rachel Andrew">
-            <p>Rachel Andrew</p>
-            <p>Medicine</p>
-            <p>UK</p>
+            <p class="teacher-name">Rachel</p>
+            <p class="teacher-name">Andrew</p>
+            <p class="teacher-speciality">Medicine</p>
+            <p class="teacher-country">UK</p>
          </div>
 
 
@@ -122,11 +140,11 @@
 
    <table>
       <tr>
-         <th>Name</th>
-         <th>Speciality</th>
-         <th>Age</th>
-         <th>Gender</th>
-         <th>Nationality</th>
+         <th>Name <p class="line-to-bottom">↓</p></th>
+         <th>Speciality <p class="line-to-bottom">↓</p></th>
+         <th>Age <p class="line-to-bottom">↓</p></th>
+         <th>Gender <p class="line-to-bottom">↓</p> </th>
+         <th>Nationality <p class="line-to-bottom">↓</p></th>
       </tr>
       <tr>
          <td>Daisy Alexander</td>
@@ -188,7 +206,7 @@
    </table>
 
 
-   <nav>
+   <nav class="pages">
       1
       <a class="numbers-of-pages" href="#">2</a>
       <a class="numbers-of-pages" href="#">3</a>
@@ -199,45 +217,49 @@
    <hr>
    <h2>Favorites</h2>
 
-   <!-- buttons to scroll to the left and to the right -->
-
    <!-- short list of teachers in the bottom of the page -->
 
    <div class="short-teacher-list-bottom">
       <a href="#" class="move-button">&#8249;</a>
 
       <div class="teacher-card">
-         <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk">
-         <div class="star">★</div>
-         <p>Ihor Tkachuk</p>
-         <p>Chemistry</p>
-         <p>Ukraine</p>
+         <div class="image-container">
+            <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk ">
+            <div class="star">★</div>
+         </div>
+         <p class="teacher-name">Ihor</p>
+         <p class="teacher-name">Tkachuk</p>
+         <p class="teacher-country">Ukraine</p>
       </div>
       <div class="teacher-card">
          <img src="https://via.placeholder.com/80" alt="Pragg Rameshbabu">
-         <p>Pragg Rameshbabu</p>
-         <p>Chess</p>
-         <p>India</p>
+         <p class="teacher-name">Pragg</p>
+         <p class="teacher-name">Rameshbabu</p>
+         <p class="teacher-country">India</p>
       </div>
       <div class="teacher-card">
-         <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk">
-         <div class="star">★</div>
-         <p>Ihor Tkachuk</p>
-         <p>Chemistry</p>
-         <p>Ukraine</p>
+         <div class="image-container">
+            <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk ">
+            <div class="star">★</div>
+         </div>
+         <p class="teacher-name">Ihor</p>
+         <p class="teacher-name">Tkachuk</p>
+         <p class="teacher-country">Ukraine</p>
       </div>
       <div class="teacher-card">
          <img src="https://via.placeholder.com/80" alt="Pragg Rameshbabu">
-         <p>Pragg Rameshbabu</p>
-         <p>Chess</p>
-         <p>India</p>
+         <p class="teacher-name">Pragg</p>
+         <p class="teacher-name">Rameshbabu</p>
+         <p class="teacher-country">India</p>
       </div>
       <div class="teacher-card">
-         <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk">
-         <div class="star">★</div>
-         <p>Ihor Tkachuk</p>
-         <p>Chemistry</p>
-         <p>Ukraine</p>
+         <div class="image-container">
+            <img src="https://via.placeholder.com/80" alt="Ihor Tkachuk ">
+            <div class="star">★</div>
+         </div>
+         <p class="teacher-name">Ihor</p>
+         <p class="teacher-name">Tkachuk</p>
+         <p class="teacher-country">Ukraine</p>
       </div>
 
       <a href="#" class="move-button">&#8250;</a>
@@ -258,6 +280,7 @@
       condimentum. </p>
 
 
+   <div class="one-line">
    <nav>
       <a class="menu" href="#">Teachers</a>
       <a class="menu" href="#">Statistics</a>
@@ -266,6 +289,52 @@
    </nav>
 
    <button class="button-add-teacher">Add teacher</button>
+   </div>
+
+
+   <!-- pop up for adding a teacher (form for adding a teacher) -->
+   <div class="popup-overlay" id="popupOverlay">
+
+      <div class="popup" id="popup">
+         <span class="close" id="closePopup">&times;</span>
+         <div class="popup-content">
+
+            <form>
+               <label for="newTeacherName">Name</label><br>
+               <input type="text" placeholder="Enter name" id="newTeacherName" name="newTeacherName">
+
+               <label for="selectSpeciality">Speciality</label><br>
+               <select class="select-speciality" id="selectSpeciality">
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Art">Art</option>
+               </select>
+
+               <label for="selectCountry">Country</label>
+               <label for="newTeacherCity">City</label><br>
+               <div class="one-line-in-form">
+
+               <select class="select-country" id="selectCountry">
+                  <option value="Ukraine">Ukraine</option>
+                  <option value="USA">USA</option>
+               </select>
+
+               <input type="text" id="newTeacherCity" name="newTeacherCity">
+               </div>
+
+               <label for="newTeacherEmail">Email</label>
+               <label for="newTeacherPhone">Phone</label><br>
+               <div class="one-line-in-form">
+                  <input type="email" id="newTeacherEmail" name="newTeacherEmail">
+                  <input type="text" id="newTeacherPhone" name="newTeacherPhone">
+               </div>
+            </form>
+
+            <button onclick="submitForm()">Sign Up</button>
+         </div>
+
+      </div>
+
+   </div>
 
    <link rel="stylesheet" href="./css/app.css">
 
@@ -273,7 +342,7 @@
 
 <body itemscope itemtype="http://schema.org/WebPage">
 
-<script type="text/javascript" src="../build/app.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
 
 </body>
 </html>
