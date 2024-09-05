@@ -3,3 +3,196 @@
 
 /* Reset and normalize */
 @import url('./normalize.css');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 4% 8%;
+}
+
+.button-add-teacher {
+    float: right;
+    border: 2px solid #df7307;
+    padding: 10px 15px;
+    font-size: 20px;
+    background-color: white;
+    color: #df7307;
+    font-weight: bold;
+}
+
+
+.grey-text {
+    margin-top: 8px;
+    margin-right: 5px;
+    color: gray;
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 2% 0;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 2em;
+    color: #d36882;
+}
+
+hr {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    border-top: 1px solid black;
+}
+
+/* Float for the search bar and add button */
+.search-container {
+    overflow: hidden;
+    margin-bottom: 20px;
+    float: right;
+
+}
+
+.search-container input[type="text"] {
+    float: left;
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid #ccc;
+}
+
+.search-container button {
+    float: right;
+    padding: 10px 20px;
+    background-color: white;
+    border: 2px solid #df7307;
+    cursor: pointer;
+    color: #df7307;
+}
+
+.section-with-border {
+    padding-bottom: 40px;
+}
+
+.short-teacher-list-bottom {
+    display: flex;
+
+}
+
+.source-name {
+    float: left;
+    font-size: 40px;
+
+}
+
+.numbers-of-pages {
+    color: rgba(158, 191, 250, 0.99);
+    text-decoration: none;
+}
+
+nav {
+    padding-top: 80px;
+    display: flex;
+}
+
+nav a {
+    margin: 0 15px;
+
+}
+
+.menu {
+    text-decoration: none;
+    font-size: 22px;
+    color: #df7307;
+    font-weight: bold;
+}
+
+.filters {
+    display: flex;
+    justify-content: left;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filters select,
+.filters input[type="checkbox"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 10px;
+    background-color: white;
+}
+
+.filters input[type="checkbox"] {
+    margin-left: 5px;
+}
+
+table {
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(252, 244, 255, 0.92);
+}
+
+
+th {
+    border-bottom: 1px solid black;
+    font-size: 20px;
+}
+
+.teachers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    justify-items: center;
+}
+
+.teacher-card {
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    width: auto;
+}
+
+.teacher-card img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid orange;
+}
+
+.teacher-card .star {
+    position: relative;
+    top: -190px;
+    left: 80px;
+    font-size: 50px;
+    color: gold;
+}
+
+.one-filter {
+    display: block ruby;
+    border-right: 2px dotted grey;
+}
+
+.move-button {
+    font-size: 80px;
+    margin-top: 90px;
+    color: gray;
+    text-decoration: none;
+}
