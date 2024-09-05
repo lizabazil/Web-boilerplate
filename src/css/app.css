@@ -103,7 +103,7 @@ hr {
     padding-bottom: 40px;
 }
 
-.select-country {
+.select-country, #newTeacherEmail {
     width: 40%;
     display: inline-block;
     background-color: white;
@@ -186,9 +186,23 @@ nav a {
     padding: 7px 0;
 }
 
+#newTeacherDate {
+    width: 40%;
+    padding: 7px 0;
+    float: left;
+    margin-left: 15px;
+}
+
 #newTeacherName {
     width: 90%;
     padding: 7px;
+}
+
+.label-at-start {
+    float: left;
+    margin-left: 20px;
+    color: gray;
+    font-size: 13px;
 }
 
 .line-to-bottom {
@@ -348,8 +362,12 @@ th:hover {
 
 }
 
-.popup {
+.blurred {
+    filter: blur(2px);
+}
 
+
+.popup {
     font-family: Arial, sans-serif;
     position: absolute;
     top: 50%;
@@ -358,7 +376,7 @@ th:hover {
     background: #fff;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-
+    width: 30%;
 }
 
 .popup-content {

@@ -8,6 +8,7 @@
    <meta name="msapplication-tap-highlight" content="no">
    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+   <div id="page-content">
    <title>Teachinder</title>
 
    <div class="section-with-border">
@@ -291,7 +292,7 @@
    <button class="button-add-teacher">Add teacher</button>
    </div>
 
-
+   </div>
    <!-- pop up for adding a teacher (form for adding a teacher) -->
    <div class="popup-overlay" id="popupOverlay">
 
@@ -300,15 +301,20 @@
          <div class="popup-content">
 
             <form>
-               <label for="newTeacherName">Name</label><br>
+               <div class="elem-in-form">
+               <label class="label-at-start" for="newTeacherName">Name</label><br>
                <input type="text" placeholder="Enter name" id="newTeacherName" name="newTeacherName">
+               </div>
 
-               <label for="selectSpeciality">Speciality</label><br>
+               <div class="elem-in-form">
+               <label class=label-at-start for="selectSpeciality">Speciality</label><br>
                <select class="select-speciality" id="selectSpeciality">
                   <option value="Mathematics">Mathematics</option>
                   <option value="Art">Art</option>
                </select>
+               </div>
 
+               <div class="elem-in-form">
                <label for="selectCountry">Country</label>
                <label for="newTeacherCity">City</label><br>
                <div class="one-line-in-form">
@@ -320,6 +326,7 @@
 
                <input type="text" id="newTeacherCity" name="newTeacherCity">
                </div>
+               </div>
 
                <label for="newTeacherEmail">Email</label>
                <label for="newTeacherPhone">Phone</label><br>
@@ -327,6 +334,8 @@
                   <input type="email" id="newTeacherEmail" name="newTeacherEmail">
                   <input type="text" id="newTeacherPhone" name="newTeacherPhone">
                </div>
+
+               <input type="date" id="newTeacherDate" name="newTeacherDate">
             </form>
 
             <button onclick="submitForm()">Sign Up</button>
@@ -337,6 +346,7 @@
    </div>
 
    <link rel="stylesheet" href="./css/app.css">
+
 
 </head>
 
