@@ -25,6 +25,64 @@ body {
     font-weight: bold;
 }
 
+.detailed-image {
+    width: 30%;
+    float: left;
+    margin: 10px;
+}
+
+.detailed-info {
+    padding: 20px;
+    float: left;
+    text-align: left;
+    width: 65%;
+}
+
+.detailed-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.detailed-speciality {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.detailed-location, .detailed-age-gender, .detailed-email, .detailed-phone {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+
+.detailed-part-2 {
+    text-align: left;
+    padding: 20px;
+    color: #515050;
+}
+
+.detailed-part-2 a {
+    color: #00aaff;
+}
+
+.detailed-email a {
+    color: #00aaff;
+    text-decoration: none;
+}
+
+.detailed-email a:hover {
+    text-decoration: underline;
+}
+
+.detailed-phone {
+    color: #333;
+}
+#detailedPopup {
+    width: 45%;
+}
 
 .elem-in-form {
     margin-top: 20px;
@@ -293,6 +351,15 @@ table {
     margin-top: 20px;
 }
 
+.toggle-map {
+    color: #5aafff;
+    float: left;
+    padding-left: 20px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    border-bottom: 2px dotted #5aafff;
+}
+
 th, td {
     text-align: left;
     padding: 10px;
@@ -373,6 +440,11 @@ th:hover {
     color: black;
 }
 
+
+.padding-from-image {
+    padding: 10px;
+}
+
 .pages {
     display: flex;
     margin-bottom: 60px;
@@ -414,6 +486,14 @@ th:hover {
 
 .popup-content {
     text-align: center;
+}
+
+.popup-content .star {
+    color: #f7cf71;
+    top: 100px;
+    position: fixed;
+    right: 20px;
+    font-size: 50px;
 }
 
 .popup .close {

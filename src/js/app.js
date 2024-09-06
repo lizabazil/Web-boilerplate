@@ -8,11 +8,18 @@ document.addEventListener('DOMContentLoaded', function () {
         openPopup()
     }))
 
-    //const popupOverlay = document.getElementById('popupOverlay')
 
-    const popup = document.getElementById('popup')
+    // take all teacher cards in order to make popup with detailed info about teacher
+    const teacherCardsInTop = document.querySelectorAll('.teacher-card')
+    teacherCardsInTop.forEach(el => el.addEventListener('click', Event => {
+        openDetailedTeacherPopup()
+    }))
+
+
+    const popup = document.getElementById('popupOverlay')
 
     const closePopup = document.getElementById('closePopup')
+    const closeDetailedPopup = document.getElementById('closeDetailedPopup')
     const content = document.getElementById('page-content')
 
     function openPopup() {
@@ -25,13 +32,30 @@ document.addEventListener('DOMContentLoaded', function () {
         content.classList.remove('blurred')
     }
 
-    openPopup();
     closePopup.addEventListener('click', closePopupFunc);
     popupOverlay.addEventListener('click', function (event) {
         if (event.target === popupOverlay) {
             closePopupFunc()
         }
     });
+
+    closeDetailedPopup.addEventListener('click', closeDetailedPopupFunc)
+    detailedPopupOverlay.addEventListener('click', function (event) {
+        if(event.target === detailedPopupOverlay) {
+            closeDetailedPopupFunc()
+        }
+    })
+
+
+    function openDetailedTeacherPopup() {
+        detailedPopupOverlay.style.display = 'inline-block'
+        content.classList.add('blurred')
+    }
+
+    function closeDetailedPopupFunc() {
+        detailedPopupOverlay.style.display = 'none'
+        content.classList.remove('blurred')
+    }
 });
 
 console.log(testModules.hello);
