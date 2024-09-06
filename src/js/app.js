@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         openPopup()
     }))
 
-    const popupOverlay = document.getElementById('popupOverlay')
+    //const popupOverlay = document.getElementById('popupOverlay')
 
     const popup = document.getElementById('popup')
 

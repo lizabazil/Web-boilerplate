@@ -25,10 +25,20 @@ body {
     font-weight: bold;
 }
 
+
+.elem-in-form {
+    margin-top: 20px;
+}
+
 .button-add-teacher:hover {
     background-color: #df7307;
     color: white;
     font-weight: bold;
+}
+
+input[type=color] {
+    left: 30%;
+    position: absolute;
 }
 
 
@@ -64,7 +74,10 @@ hr {
 
 .image-container {
     position: relative;
+    overflow: hidden;
+
 }
+
 
 .search-container {
     overflow: hidden;
@@ -103,17 +116,23 @@ hr {
     padding-bottom: 40px;
 }
 
+.second-label {
+    color: gray;
+    font-size: 13px;
+    left: 55%;
+    position: absolute;
+}
+
 .select-country, #newTeacherEmail {
     width: 40%;
     display: inline-block;
     background-color: white;
     border: 1px solid gray;
-    padding: 7px 0;
+    padding: 7px 7px;
 }
 
 .select-speciality {
     width: 90%;
-    margin-top: 10px;
     background-color: white;
     padding: 7px 0;
     border: 1px solid gray;
@@ -186,11 +205,12 @@ nav a {
     padding: 7px 0;
 }
 
+
 #newTeacherDate {
     width: 40%;
     padding: 7px 0;
-    float: left;
-    margin-left: 15px;
+    left: 5%;
+    position: absolute;
 }
 
 #newTeacherName {
@@ -198,11 +218,17 @@ nav a {
     padding: 7px;
 }
 
+
+#newTeacherPhone {
+    width: 40%;
+}
+
 .label-at-start {
-    float: left;
     margin-left: 20px;
     color: gray;
     font-size: 13px;
+    left: 1%;
+    position: absolute;
 }
 
 .line-to-bottom {
@@ -221,6 +247,10 @@ nav a {
 
 .menu:hover {
     color: rgba(229,69,23,0.92);
+}
+
+#notes {
+    width: 90%;
 }
 
 
@@ -301,18 +331,22 @@ th:hover {
     width: auto;
 }
 
+
 .teacher-card img {
     width: 180px;
     height: 180px;
     border-radius: 50%;
     margin-bottom: 10px;
     border: 3px solid orange;
+    overflow: hidden;
 }
 
 
 
 .teacher-card img:hover {
     border: 3px solid rgba(229,69,23,0.92);
+    transform: scale(1.1);
+    transition: 0.5s ease;
 }
 
 .teacher-card .star {
@@ -374,7 +408,6 @@ th:hover {
     left: 50%;
     transform: translate(-50%, -50%);
     background: #fff;
-    padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     width: 30%;
 }
@@ -387,21 +420,46 @@ th:hover {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 20px;
+    font-size: 40px;
     cursor: pointer;
-    color: #333;
+    color: white;
 
 }
 
 
 .popup button {
-    background-color: #4caf50;
-    color: #fff;
+    background-color: white;
+    color: #df7307;
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
+    border: 2px solid #df7307;
+    margin-top: 30px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px;
+    width: 90%;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+}
+
+
+.radio-add-teacher-sex {
+    display: flex;
+}
+
+.radio-options {
+    display: flex;
+    margin-left: 15%;
+    color: #575656;
+    gap: 20px;
 }
 
 

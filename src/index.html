@@ -297,7 +297,10 @@
    <div class="popup-overlay" id="popupOverlay">
 
       <div class="popup" id="popup">
-         <span class="close" id="closePopup">&times;</span>
+         <div class="popup-header">
+            <h2>Add Teacher</h2>
+            <span class="close" id="closePopup">&times;</span>
+         </div>
          <div class="popup-content">
 
             <form>
@@ -315,8 +318,8 @@
                </div>
 
                <div class="elem-in-form">
-               <label for="selectCountry">Country</label>
-               <label for="newTeacherCity">City</label><br>
+               <label class="label-at-start" for="selectCountry">Country</label>
+               <label class="second-label" for="newTeacherCity">City</label><br>
                <div class="one-line-in-form">
 
                <select class="select-country" id="selectCountry">
@@ -328,17 +331,40 @@
                </div>
                </div>
 
-               <label for="newTeacherEmail">Email</label>
-               <label for="newTeacherPhone">Phone</label><br>
+               <div class="elem-in-form">
+               <label class="label-at-start" for="newTeacherEmail">Email</label>
+               <label class="second-label" for="newTeacherPhone">Phone</label><br>
                <div class="one-line-in-form">
                   <input type="email" id="newTeacherEmail" name="newTeacherEmail">
                   <input type="text" id="newTeacherPhone" name="newTeacherPhone">
                </div>
+               </div>
 
-               <input type="date" id="newTeacherDate" name="newTeacherDate">
+               <div class="elem-in-form">
+               <label class="label-at-start" for="newTeacherDate">Date of birth</label><br>
+               <input type="date" id="newTeacherDate" name="newTeacherDate"> <br><br><br>
+               </div>
+
+               <div class="radio-add-teacher-sex">
+                  <label class="label-at-start">Sex</label>
+                  <div class="radio-options">
+               <label><input type="radio" value="Male">Male</label>
+               <label><input type="radio" value="Female">Female</label>
+                  </div>
+               </div>
+
+               <br>
+               <label class="label-at-start">Background color</label>
+               <input type="color">
+               <br>
+               <br>
+
+               <label class="label-at-start" for="notes">Notes (optional)</label><br>
+               <textarea id="notes" rows="6"></textarea>
+
             </form>
 
-            <button onclick="submitForm()">Sign Up</button>
+            <button onclick="submitForm()">Add</button>
          </div>
 
       </div>
