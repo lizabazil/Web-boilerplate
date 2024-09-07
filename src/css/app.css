@@ -543,4 +543,30 @@ th:hover {
 }
 
 
+/* for screens with width less than 768 px*/
+@media only screen and (max-width: 768px) {
+    .short-teacher-list-bottom {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        justify-items: center;
+    }
 
+    .filters {
+        display: block;
+    }
+
+    .one-filter {
+        border-right: none;
+        border-bottom: 2px dotted gray;
+    }
+
+    .search-container input[type=text]:hover {
+        width: auto;
+    }
+
+    nav {
+        display: inline-block;
+    }
+
+}
