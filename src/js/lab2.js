@@ -26,7 +26,7 @@ function getFormattedUsers(randomUserMock, additionalUsers) {
         "course": generateUserCourse(),
         "bg_color": generateUserBgColor(),
         "note": `Note about ${currentUser.name.first}`,
-        "gender": currentUser.gender,
+        "gender": currentUser.gender.charAt(0).toUpperCase().concat(currentUser.gender.slice(1)),
         "title": `${currentUser.name.title}`,
         "full_name": `${currentUser.name.first} ${currentUser.name.last}`,
         "city": currentUser.location.city,
@@ -43,7 +43,11 @@ function getFormattedUsers(randomUserMock, additionalUsers) {
         "picture_thumbnail": currentUser.picture.thumbnail
     }))
 
-    // join two arrays (formatted array from randomUserMock and additionalUsers
+    additionalUsers.forEach(user => {
+        user.gender = user.gender.charAt(0).toUpperCase().concat(user.gender.slice(1))
+    })
+
+    // join two arrays (formatted array from randomUserMock and additionalUsers)
     let joinedArrays = formattedUserMock.concat(additionalUsers)
 
     joinedArrays = joinedArrays.filter((obj, index, self) =>
@@ -54,29 +58,31 @@ function getFormattedUsers(randomUserMock, additionalUsers) {
 
 
 // task 2
-// TODO: finish validation - by gender and phone
 function validateUser(user) {
     return isStringAndStartsWithCapitalLetter(user.full_name)
-   /* && isStringAndStartsWithCapitalLetter(user.gender)
+    && isStringAndStartsWithCapitalLetter(user.gender)
     && isStringAndStartsWithCapitalLetter(user.note)
     && isStringAndStartsWithCapitalLetter(user.state)
     && isStringAndStartsWithCapitalLetter(user.city)
-    && isStringAndStartsWithCapitalLetter(user.country)*/
-    && isANumber(user.age)
-    && isEmail(user.email)
+    && isStringAndStartsWithCapitalLetter(user.country)
+    && typeof user.age === 'number'
+        && isValidPhoneNumber(user.phone)
+    && isValidEmail(user.email)
 }
 
 function isStringAndStartsWithCapitalLetter(value) {
     return typeof value === 'string' && value.charAt(0) === value.charAt(0).toUpperCase()
 }
 
-function isANumber(value) {
-    return typeof value === 'number'
-}
 
-function isEmail(value) {
+function isValidEmail(value) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return regex.test(value)
+}
+
+function isValidPhoneNumber(phoneNumber) {
+    const regex = /^[+\d\s\-]+$/
+    return regex.test(phoneNumber)
 }
 
 
@@ -122,22 +128,81 @@ function sortUsers(arrayOfUsers, sortBy, order='asc') {
 }
 
 
-const formatted = getFormattedUsers(randomUserMock, additionalUsers)
+// task 5
+function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
+    if(typeof searchValue === 'string') searchValue = searchValue.toLowerCase()
+    let resultArray = []
+    for(let user of arrayOfUsers) {
+        if (
+            (user.full_name !== null && user.full_name.toLowerCase().includes(searchValue))
+        || (user.note != null && user.note.toLowerCase().includes(searchValue))
+        || (user.age != null && user.age == searchValue)
+        )
+            resultArray.push(user)
+    }
 
+    return resultArray
+}
+
+
+// task 6
+function getPercentageOfUsersInSearching(users, searchValue, condition) {
+    let matchingUsers = 0
+    users.forEach(user => {
+        switch (condition) {
+            case 'greater':
+                if(user.age > searchValue) matchingUsers++
+                break
+            case 'less':
+                if(user.age < searchValue) matchingUsers++
+                break
+            case 'greaterOrEqual':
+                if(user.age >= searchValue) matchingUsers++
+                break
+            case 'lessOrEqual':
+                if(user.age <= searchValue) matchingUsers++
+                break
+            default:
+                console.log('Invalid condition')
+        }
+    })
+
+    return (matchingUsers / users.length) * 100
+}
+
+
+
+// task 1
+const formatted = getFormattedUsers(randomUserMock.slice(0), additionalUsers.slice(0))
 console.log(formatted)
-console.log(`size of randomUsers = ${randomUserMock.length}`)
-console.log(`size of additionalUsers = ${additionalUsers.length}`)
-console.log(`size of formatted array = ${formatted.length}`)
 
-console.log(`${isStringAndStartsWithCapitalLetter('9')}`)
+// task 2
+//console.log(`validating Norbert = ${validateUser(formatted[0])}`)
 
-console.log(formatted[0])
-console.log(`validating Norbert = ${validateUser(formatted[0])}`)
+// task 3
+const filterCountry = 'Germany'
+const filterAge = undefined
+const filterGender = 'female'
+const filterFavorite = true
 
-let filtered = filterUsers(formatted, 'Germany', undefined, 'female')
-console.log('FILTERED')
+let filtered = filterUsers(formatted, filterCountry, filterAge, filterGender, filterFavorite)
+console.log(`FILTERED by country=${filterCountry}, age=${filterAge}, gender=${filterGender}, favorite=${filterFavorite}`)
 console.log(filtered)
 
-console.log('SORT BY AGE ASC')
-let sorted = sortUsers(formatted, 'b_date', 'asc')
+// task 4
+console.log('sorted by age')
+let sorted = sortUsers(formatted, 'age', 'desc')
 console.log(sorted)
+
+// task 5
+const searchParameter = 'esat'
+console.log(`searching by name/note/age, parameter = ${searchParameter}`)
+console.log(searchByNameNoteOrAge(searchParameter, formatted))
+
+// task 6
+const ageVal = 26
+const condition = 'less'
+console.log(`percentage of users with age ${condition}, ${ageVal}`)
+console.log(getPercentageOfUsersInSearching(formatted, ageVal, condition))
+
+//console.dir(formatted, {'maxArrayLength': null})
