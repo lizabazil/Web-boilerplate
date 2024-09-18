@@ -19,6 +19,7 @@ function generateUserBgColor() {
 }
 
 // task 1
+// to format array randomUserMock and add two arrays, then delete duplicates if they are
 function getFormattedUsers(randomUserMock, additionalUsers) {
     let formattedUserMock = randomUserMock.map(currentUser => ({
         "id": uuidv4(),
@@ -134,7 +135,7 @@ function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
     let resultArray = []
     for(let user of arrayOfUsers) {
         if (
-            (user.full_name !== null && user.full_name.toLowerCase().includes(searchValue))
+            (user.full_name != null && user.full_name.toLowerCase().includes(searchValue))
         || (user.note != null && user.note.toLowerCase().includes(searchValue))
         || (user.age != null && user.age == searchValue)
         )
@@ -146,28 +147,9 @@ function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
 
 
 // task 6
-function getPercentageOfUsersInSearching(users, searchValue, condition) {
-    let matchingUsers = 0
-    users.forEach(user => {
-        switch (condition) {
-            case 'greater':
-                if(user.age > searchValue) matchingUsers++
-                break
-            case 'less':
-                if(user.age < searchValue) matchingUsers++
-                break
-            case 'greaterOrEqual':
-                if(user.age >= searchValue) matchingUsers++
-                break
-            case 'lessOrEqual':
-                if(user.age <= searchValue) matchingUsers++
-                break
-            default:
-                console.log('Invalid condition')
-        }
-    })
-
-    return (matchingUsers / users.length) * 100
+function getPercentageOfUsersInSearching(searchValue, users) {
+   let arrayOfUsersOfSearching = searchByNameNoteOrAge(searchValue, users)
+    return (arrayOfUsersOfSearching.length / users.length) * 100
 }
 
 
@@ -200,9 +182,5 @@ console.log(`searching by name/note/age, parameter = ${searchParameter}`)
 console.log(searchByNameNoteOrAge(searchParameter, formatted))
 
 // task 6
-const ageVal = 26
-const condition = 'less'
-console.log(`percentage of users with age ${condition}, ${ageVal}`)
-console.log(getPercentageOfUsersInSearching(formatted, ageVal, condition))
-
-//console.dir(formatted, {'maxArrayLength': null})
+const searchValueForStats = '65'
+console.log(getPercentageOfUsersInSearching(searchValueForStats, formatted))
