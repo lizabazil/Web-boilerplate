@@ -1,5 +1,7 @@
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
-import {v4 as uuidv4 } from 'uuid';
+//import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
+// TODO: change import for working with page
+import {v4 as uuidv4 } from 'uuid'
 
 // list of all courses
 const courses = ["Mathematics", "Physics", "English", "Computer Science", "Dancing", "Chess", "Biology", "Chemistry",
@@ -20,8 +22,8 @@ function generateUserBgColor() {
 
 // task 1
 // to format array randomUserMock and add two arrays, then delete duplicates if they are
-function getFormattedUsers(randomUserMock, additionalUsers) {
-    let formattedUserMock = randomUserMock.map(currentUser => ({
+export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
+    let formattedUserMock = arrayOfRandomUsers.map(currentUser => ({
         "id": uuidv4(),
         "favorite": Math.random() < 0.5, // generating random True/False
         "course": generateUserCourse(),
@@ -44,12 +46,12 @@ function getFormattedUsers(randomUserMock, additionalUsers) {
         "picture_thumbnail": currentUser.picture.thumbnail
     }))
 
-    additionalUsers.forEach(user => {
+    moreUsers.forEach(user => {
         user.gender = user.gender.charAt(0).toUpperCase().concat(user.gender.slice(1))
     })
 
     // join two arrays (formatted array from randomUserMock and additionalUsers)
-    let joinedArrays = formattedUserMock.concat(additionalUsers)
+    let joinedArrays = formattedUserMock.concat(moreUsers)
 
     joinedArrays = joinedArrays.filter((obj, index, self) =>
         index === self.findIndex((t) =>
@@ -82,7 +84,7 @@ function isValidEmail(value) {
 }
 
 function isValidPhoneNumber(phoneNumber) {
-    const regex = /^[+\d\s\-]+$/
+    const regex = /^[()+\d\s\-]+$/
     return regex.test(phoneNumber)
 }
 
@@ -130,6 +132,7 @@ function sortUsers(arrayOfUsers, sortBy, order='asc') {
 
 
 // task 5
+// search by name, note or age and return array with those users
 function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
     if(typeof searchValue === 'string') searchValue = searchValue.toLowerCase()
     let resultArray = []
@@ -148,39 +151,219 @@ function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
 
 // task 6
 function getPercentageOfUsersInSearching(searchValue, users) {
-   let arrayOfUsersOfSearching = searchByNameNoteOrAge(searchValue, users)
+   const firstChar = searchValue[0]
+    let arrayOfUsersOfSearching
+    if (firstChar === '>' || firstChar === '<' || firstChar === '=') {
+        let number = parseInt(searchValue.slice(1))
+
+        if (!isNaN(number)) {
+            if (firstChar === '>')
+                arrayOfUsersOfSearching = users.filter(user => user.age > number)
+             else if (firstChar === '<')
+                arrayOfUsersOfSearching = users.filter(user => user.age < number)
+            else
+                arrayOfUsersOfSearching = users.filter(user => user.age == number)
+        }
+    } else
+        arrayOfUsersOfSearching = searchByNameNoteOrAge(searchValue, users)
     return (arrayOfUsersOfSearching.length / users.length) * 100
 }
 
 
 
 // task 1
+console.log('TASK 1-------------------------------------------------------------------------')
+console.log('array of formatted users')
 const formatted = getFormattedUsers(randomUserMock.slice(0), additionalUsers.slice(0))
-console.log(formatted)
+//console.log(formatted)
+
 
 // task 2
-//console.log(`validating Norbert = ${validateUser(formatted[0])}`)
+/*
+console.log('TASK 2-------------------------------------------------------------------------')
+console.log('validating user')
+console.log(formatted[0])
+console.log(`result of validating = ${validateUser(formatted[0])}`)
+
+console.log('-----------------------------------------------------------------------')
+console.log('validating user')
+console.log(formatted[38])
+console.log(`result of validating = ${validateUser(formatted[38])}`)
+
+console.log('-----------------------------------------------------------------------')
+let userForValidating = {
+    "id": uuidv4(),
+    "favorite": Math.random() < 0.5, // generating random True/False
+    "course": generateUserCourse(),
+    "bg_color": generateUserBgColor(),
+    "note": `Note about someone`,
+    "gender": 'male',
+    "title": null,
+    "full_name": `someone`
+}
+
+
+console.log('validating user')
+console.log(userForValidating)
+console.log(`result of validating = ${validateUser(userForValidating)}`)
+
+console.log('-----------------------------------------------------------------------')
+
+userForValidating = {
+    id: uuidv4(),
+    favorite: Math.random() < 0.5, // generating random True/False
+    course: generateUserCourse(),
+    bg_color: generateUserBgColor(),
+    note: 'Note about someone',
+    gender: 'Male',
+    state: 'New Jersey',
+    city: 'Norwalk',
+    country: 'USA',
+    title: null,
+    full_name: 'Someone',
+    phone: '+067689i',
+    email: 'someone@gmail.com',
+    age: 33
+}
+
+console.log('validating user')
+console.log(userForValidating)
+console.log(`result of validating = ${validateUser(userForValidating)}`)
+
+console.log('-----------------------------------------------------------------------')
+userForValidating = {
+    id: uuidv4(),
+    favorite: Math.random() < 0.5, // generating random True/False
+    course: generateUserCourse(),
+    bg_color: generateUserBgColor(),
+    note: 'Note about someone',
+    gender: 'Male',
+    state: 'new Jersey',
+    city: 'Norwalk',
+    country: 'USA',
+    title: null,
+    full_name: 'Someone',
+    phone: '+067689',
+    email: 'someonegmail.com',
+    age: 33
+}
+
+console.log('validating user')
+console.log(userForValidating)
+console.log(`result of validating = ${validateUser(userForValidating)}`)
+
+console.log('-----------------------------------------------------------------------')
+console.log('validating user')
+console.log(formatted[38])
+console.log(`result of validating = ${validateUser(formatted[38])}`)
+ */
+
 
 // task 3
-const filterCountry = 'Germany'
-const filterAge = undefined
-const filterGender = 'female'
-const filterFavorite = true
+/*
+console.log('TASK 3-------------------------------------------------------------------------')
+let filterCountry = 'Germany'
+let filterAge = undefined
+let filterGender = 'Female'
+let filterFavorite = true
 
 let filtered = filterUsers(formatted, filterCountry, filterAge, filterGender, filterFavorite)
 console.log(`FILTERED by country=${filterCountry}, age=${filterAge}, gender=${filterGender}, favorite=${filterFavorite}`)
 console.log(filtered)
+console.log('----------------------------------------------')
+
+filterCountry = 'Norway'
+filterAge = 28
+filterGender = 'Female'
+filterFavorite = undefined
+
+filtered = filterUsers(formatted, filterCountry, filterAge, filterGender, filterFavorite)
+console.log(`FILTERED by country=${filterCountry}, age=${filterAge}, gender=${filterGender}, favorite=${filterFavorite}`)
+console.log(filtered)
+
+console.log('----------------------------------------------')
+
+filterCountry = 'Ireland'
+filterAge = undefined
+filterGender = 'Male'
+filterFavorite = undefined
+
+filtered = filterUsers(formatted, filterCountry, filterAge, filterGender, filterFavorite)
+console.log(`FILTERED by country=${filterCountry}, age=${filterAge}, gender=${filterGender}, favorite=${filterFavorite}`)
+console.log(filtered)
+ */
+
 
 // task 4
-console.log('sorted by age')
+///*
+console.log('TASK 4-------------------------------------------------------------------------')
+/*
+console.log('sorted by age desc')
 let sorted = sortUsers(formatted, 'age', 'desc')
 console.log(sorted)
+*/
+
+/*
+console.log('-------------------------------------------------')
+console.log('sorted by country asc')
+let sorted = sortUsers(formatted, 'country')
+console.log(sorted)
+*/
+
+/*
+console.log('-------------------------------------------------')
+console.log('sorted by full name asc')
+let sorted = sortUsers(formatted, 'full_name')
+console.log(sorted)
+*/
+
+/*
+console.log('-------------------------------------------------')
+console.log('sorted by d_date asc')
+let sorted = sortUsers(formatted, 'b_date')
+console.log(sorted)
+*/
+
+
+// */
 
 // task 5
-const searchParameter = 'esat'
+console.log('TASK 5-------------------------------------------------------------------------')
+/*
+let searchParameter = 'esat'
 console.log(`searching by name/note/age, parameter = ${searchParameter}`)
 console.log(searchByNameNoteOrAge(searchParameter, formatted))
 
+searchParameter = 'luc'
+console.log(`searching by name/note/age, parameter = ${searchParameter}`)
+console.log(searchByNameNoteOrAge(searchParameter, formatted))
+
+searchParameter = '36'
+console.log(`searching by name/note/age, parameter = ${searchParameter}`)
+console.log(searchByNameNoteOrAge(searchParameter, formatted))
+
+searchParameter = 'cats'
+console.log(`searching by name/note/age, parameter = ${searchParameter}`)
+console.log(searchByNameNoteOrAge(searchParameter, formatted))
+*/
+
+
 // task 6
-const searchValueForStats = '65'
-console.log(getPercentageOfUsersInSearching(searchValueForStats, formatted))
+/*
+console.log('TASK 6-------------------------------------------------------------------------')
+console.log('Search value => 65')
+console.log(getPercentageOfUsersInSearching('65', formatted))
+
+console.log('Search value => tessa')
+console.log(getPercentageOfUsersInSearching('tessa', formatted))
+
+
+console.log('Search value =>  >70')
+console.log(getPercentageOfUsersInSearching('>70', formatted))
+
+console.log('Search value => =24')
+console.log(getPercentageOfUsersInSearching('=24', formatted))
+
+console.log('Search value => <38')
+console.log(getPercentageOfUsersInSearching('<38', formatted))
+ */
