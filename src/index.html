@@ -42,36 +42,41 @@
 
          <div class="one-filter">
          <div class="grey-text">Age</div>
-         <select>
+         <select id="ageFilter">
+            <option value="all">all</option>
             <option value="18-31">18-31</option>
             <option value="32-45">32-45</option>
+            <option value="46-60">46-60</option>
+            <option value="61-80">61-80</option>
          </select>
          </div>
 
          <div class="one-filter">
-         <div class="grey-text">Region</div>
-         <select>
-            <option value="europe">Europe</option>
-            <option value="asia">Asia</option>
+         <div class="grey-text">Country</div>
+         <select id="countryFilter">
+            <option value="all">all</option>
+            <option value="England">England</option>
+            <option value="Finland">Finland</option>
          </select>
          </div>
 
          <div class="one-filter">
-         <div class="grey-text">Sex</div>
-         <select>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+         <div class="grey-text">Gender</div>
+         <select id="genderFilter">
+            <option value="all">all</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
          </select>
          </div>
 
          <div class="one-filter">
             <div class="grey-text">
-         <input type="checkbox"> Only with photo
+         <input type="checkbox" id="photoFilter"> Only with photo
             </div>
          </div>
 
          <div class="grey-text">
-         <input type="checkbox"> Only favorites
+         <input type="checkbox" id="favoriteFilter"> Only favorites
          </div>
       </div>
 
