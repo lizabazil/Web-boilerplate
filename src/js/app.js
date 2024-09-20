@@ -2,7 +2,7 @@
  /*const testModules = require('./test-module');
 require('../css/app.css');*/
 
-import {getFormattedUsers} from "./lab2.js";
+import {getFormattedUsers, filterUsers} from "./lab2.js";
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
 
 /** ******** Your code here! *********** */
@@ -35,15 +35,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    function openPopup() {
-        popupOverlay.style.display = 'inline-block'
-        content.classList.add('blurred')
-    }
+    // variables for filtering teachers
+    const ageFilter = document.getElementById('ageFilter')
+    const countryFilter = document.getElementById('countryFilter')
+    const genderFilter = document.getElementById('genderFilter')
+    const photoFilter = document.getElementById('photoFilter')
+    const favoriteFilter = document.getElementById('favoriteFilter')
+    const allFilters = [ageFilter, countryFilter, genderFilter, photoFilter, favoriteFilter]
 
-    function closePopupFunc() {
-        popupOverlay.style.display = 'none'
-        content.classList.remove('blurred')
-    }
+    allFilters.forEach(current => {
+        current.addEventListener('change', function () {
+            filterTeachersOnPage(ageFilter.value, countryFilter.value, photoFilter.checked, genderFilter.value, favoriteFilter.checked)
+        })
+    })
+
 
     closePopup.addEventListener('click', closePopupFunc);
     popupOverlay.addEventListener('click', function (event) {
@@ -60,6 +65,16 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
 
+    function openPopup() {
+        popupOverlay.style.display = 'inline-block'
+        content.classList.add('blurred')
+    }
+
+    function closePopupFunc() {
+        popupOverlay.style.display = 'none'
+        content.classList.remove('blurred')
+    }
+
     function openDetailedTeacherPopup(teacher) {
         detailedPopupOverlay.style.display = 'inline-block'
         content.classList.add('blurred')
@@ -67,16 +82,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // set info about teacher in the popup
         const image = document.querySelector('.detailed-image')
         image.src = teacher.picture_large
-        image.alt = teacher.name
+        image.alt = teacher.full_name
 
         const name = document.querySelector('.detailed-name')
-        name.textContent = teacher.name
+        name.textContent = teacher.full_name
 
         const speciality = document.querySelector('.detailed-speciality')
         speciality.textContent = teacher.course
 
         const location = document.querySelector('.detailed-location')
-        location.textContent = teacher.location
+        location.textContent = teacher.state + ', ' + teacher.country
 
         const ageGender = document.querySelector('.detailed-age-gender')
         ageGender.textContent = `${teacher.age}, ${teacher.gender}`
@@ -94,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const teacherNote = document.querySelector('.detailed-part-2')
         teacherNote.textContent = teacher.note
 
-        const address = "Mountain View, CA"
+        const address = `${teacher.country}, ${teacher.state}`
         const googleMapsLink = document.querySelector('.toggle-map')
         googleMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
     }
@@ -103,9 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
         detailedPopupOverlay.style.display = 'none'
         content.classList.remove('blurred')
     }
-
-
-    ////////////////////////////////////////////
 
     function createTeacherCard(teacher) {
         const card = document.createElement('div')
@@ -149,6 +161,28 @@ document.addEventListener('DOMContentLoaded', function () {
             openDetailedTeacherPopup(teacher)
         });
         return card
+    }
+
+    function filterTeachersOnPage(chosenAge, chosenCountry, isPhoto, chosenGender, chosenFavorite) {
+        if(!chosenFavorite)
+            chosenFavorite = undefined
+
+        if(!isPhoto)
+            isPhoto = undefined
+
+        let filteredTeachers = filterUsers(teachers, chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
+        while (container.firstChild) {
+            container.removeChild(container.firstChild)
+        }
+
+        // TODO: remove console log
+        console.log('FILTERED LOOK HERE')
+        console.log(filteredTeachers)
+        // show user filtered teachers on the page
+        filteredTeachers.forEach(teacher => {
+            const teacherCard = createTeacherCard(teacher);
+            container.appendChild(teacherCard)
+        });
     }
 });
 

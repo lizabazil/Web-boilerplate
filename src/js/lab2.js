@@ -1,7 +1,7 @@
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
-//import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
+import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
 // TODO: change import for working with page
-import {v4 as uuidv4 } from 'uuid'
+//import {v4 as uuidv4 } from 'uuid'
 
 // list of all courses
 const courses = ["Mathematics", "Physics", "English", "Computer Science", "Dancing", "Chess", "Biology", "Chemistry",
@@ -91,15 +91,21 @@ function isValidPhoneNumber(phoneNumber) {
 
 // task 3
 //filter the array of users by specified values
-function filterUsers(arrayOfUsers, chosenCountry, chosenAge, chosenGender, chosenFavorite) {
+export function filterUsers(arrayOfUsers, chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite) {
     return arrayOfUsers.filter(user => {
         return (
-            (chosenCountry === undefined || chosenCountry === user.country)
-            && (chosenAge === undefined || chosenAge === user.age)
-            && (chosenGender === undefined || chosenGender === user.gender)
+            (chosenCountry === undefined || chosenCountry === 'all' || chosenCountry === user.country)
+            && (chosenAge === undefined || chosenAge === 'all' || checkAgeInRange(chosenAge, user.age))
+            && (chosenGender === undefined || chosenGender === 'all' || chosenGender === user.gender)
+                && (isPhoto === undefined || (user.picture_large != null && user.picture_thumbnail != null))
             && (chosenFavorite === undefined || chosenFavorite === user.favorite)
         )
         })
+}
+
+function checkAgeInRange(chosenAge, userAge) {
+    const [minAge, maxAge] = chosenAge.split('-').map(Number)
+    return userAge >= minAge && userAge <= maxAge
 }
 
 
@@ -174,17 +180,13 @@ function getPercentageOfUsersInSearching(searchValue, users) {
 // task 1
 console.log('TASK 1-------------------------------------------------------------------------')
 console.log('array of formatted users')
-const formatted = getFormattedUsers(randomUserMock.slice(0), additionalUsers.slice(0))
-//console.log(formatted)
+const formatted = getFormattedUsers(randomUserMock, additionalUsers)
+console.log(formatted)
 
 
 // task 2
-/*
-console.log('TASK 2-------------------------------------------------------------------------')
-console.log('validating user')
-console.log(formatted[0])
-console.log(`result of validating = ${validateUser(formatted[0])}`)
 
+/*
 console.log('-----------------------------------------------------------------------')
 console.log('validating user')
 console.log(formatted[38])
@@ -260,18 +262,8 @@ console.log(`result of validating = ${validateUser(formatted[38])}`)
 
 
 // task 3
+
 /*
-console.log('TASK 3-------------------------------------------------------------------------')
-let filterCountry = 'Germany'
-let filterAge = undefined
-let filterGender = 'Female'
-let filterFavorite = true
-
-let filtered = filterUsers(formatted, filterCountry, filterAge, filterGender, filterFavorite)
-console.log(`FILTERED by country=${filterCountry}, age=${filterAge}, gender=${filterGender}, favorite=${filterFavorite}`)
-console.log(filtered)
-console.log('----------------------------------------------')
-
 filterCountry = 'Norway'
 filterAge = 28
 filterGender = 'Female'
@@ -296,12 +288,7 @@ console.log(filtered)
 
 // task 4
 ///*
-console.log('TASK 4-------------------------------------------------------------------------')
-/*
-console.log('sorted by age desc')
-let sorted = sortUsers(formatted, 'age', 'desc')
-console.log(sorted)
-*/
+
 
 /*
 console.log('-------------------------------------------------')
@@ -329,11 +316,8 @@ console.log(sorted)
 
 // task 5
 console.log('TASK 5-------------------------------------------------------------------------')
-/*
-let searchParameter = 'esat'
-console.log(`searching by name/note/age, parameter = ${searchParameter}`)
-console.log(searchByNameNoteOrAge(searchParameter, formatted))
 
+/*
 searchParameter = 'luc'
 console.log(`searching by name/note/age, parameter = ${searchParameter}`)
 console.log(searchByNameNoteOrAge(searchParameter, formatted))
@@ -349,7 +333,7 @@ console.log(searchByNameNoteOrAge(searchParameter, formatted))
 
 
 // task 6
-/*
+
 console.log('TASK 6-------------------------------------------------------------------------')
 console.log('Search value => 65')
 console.log(getPercentageOfUsersInSearching('65', formatted))
@@ -366,4 +350,3 @@ console.log(getPercentageOfUsersInSearching('=24', formatted))
 
 console.log('Search value => <38')
 console.log(getPercentageOfUsersInSearching('<38', formatted))
- */
