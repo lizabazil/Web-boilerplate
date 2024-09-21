@@ -61,7 +61,7 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
 
 
 // task 2
-function validateUser(user) {
+export function validateUser(user) {
     return isStringAndStartsWithCapitalLetter(user.full_name)
     && isStringAndStartsWithCapitalLetter(user.gender)
     && isStringAndStartsWithCapitalLetter(user.note)
@@ -110,7 +110,8 @@ function checkAgeInRange(chosenAge, userAge) {
 
 
 // task 4
-function sortUsers(arrayOfUsers, sortBy, order='asc') {
+export function sortUsers(arrayOfUsers, sortBy, order='asc') {
+    console.log(`sort by = ${sortBy}, order = ${order}`)
     if(sortBy === 'full_name') {
         if(order === 'asc')
             return arrayOfUsers.sort((a, b) => a.full_name.localeCompare(b.full_name))
@@ -134,14 +135,42 @@ function sortUsers(arrayOfUsers, sortBy, order='asc') {
             return arrayOfUsers.sort((a, b) => a.country.localeCompare(b.country))
         else return arrayOfUsers.sort((a, b) => b.country.localeCompare(a.country))
     }
+
+    else if(sortBy === 'course') {
+            return arrayOfUsers.sort( (a, b) =>  {
+                const courseA = a.course === null ? '' : a.course;
+                const courseB = b.course === null ? '' : b.course;
+
+                if (order === 'asc')
+                    return courseA.localeCompare(courseB);
+                 else
+                    return courseB.localeCompare(courseA);
+
+            })
+    }
 }
 
 
 // task 5
 // search by name, note or age and return array with those users
-function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
+export function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
     if(typeof searchValue === 'string') searchValue = searchValue.toLowerCase()
     let resultArray = []
+
+    if(searchValue.charAt(0) === '>' || searchValue.charAt(0) === '<' || searchValue.charAt(0) === '=') {
+        let number = parseInt(searchValue.slice(1))
+        let firstChar = searchValue.charAt(0)
+
+        if(!isNaN(number)) {
+            if (firstChar === '>')
+               return arrayOfUsers.filter(user => user.age > number)
+            else if (firstChar === '<')
+                return arrayOfUsers.filter(user => user.age < number)
+            else
+                return arrayOfUsers.filter(user => user.age == number)
+        }
+    }
+    else
     for(let user of arrayOfUsers) {
         if (
             (user.full_name != null && user.full_name.toLowerCase().includes(searchValue))

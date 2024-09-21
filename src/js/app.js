@@ -2,8 +2,10 @@
  /*const testModules = require('./test-module');
 require('../css/app.css');*/
 
-import {getFormattedUsers, filterUsers} from "./lab2.js";
+import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge} from "./lab2.js";
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
+
+const allUsersCountries = new Set()
 
 /** ******** Your code here! *********** */
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,15 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeDetailedPopup = document.getElementById('closeDetailedPopup')
     const content = document.getElementById('page-content')
 
-
-    const teachers = getFormattedUsers(randomUserMock, additionalUsers)
-    const container = document.getElementsByClassName('teachers-grid')[0];
-    teachers.forEach(teacher => {
-        const teacherCard = createTeacherCard(teacher);
-        container.appendChild(teacherCard)
-    });
-
-
     // variables for filtering teachers
     const ageFilter = document.getElementById('ageFilter')
     const countryFilter = document.getElementById('countryFilter')
@@ -46,6 +39,39 @@ document.addEventListener('DOMContentLoaded', function () {
     allFilters.forEach(current => {
         current.addEventListener('change', function () {
             filterTeachersOnPage(ageFilter.value, countryFilter.value, photoFilter.checked, genderFilter.value, favoriteFilter.checked)
+        })
+    })
+
+
+
+    const notValidatedTeachers = getFormattedUsers(randomUserMock, additionalUsers)
+    const teachers = notValidatedTeachers.filter(current => validateUser(current))
+
+
+    const container = document.getElementsByClassName('teachers-grid')[0];
+    teachers.forEach(teacher => {
+        // add teacher's country to the set
+        allUsersCountries.add(teacher.country)
+
+        // add teacher's card to the page
+        const teacherCard = createTeacherCard(teacher);
+        container.appendChild(teacherCard)
+    });
+
+    addOptionsOfCountries()
+
+
+    // add listener to button for searching by input
+    document.getElementById('searchButton').addEventListener('click', function () {
+        const searchValue = document.getElementById('searchInput').value
+        document.getElementById('searchInput').value = ''
+
+        const resultOfSearching = searchByNameNoteOrAge(searchValue, teachers)
+        removeAllTeachersCardsFromGrid()
+
+        resultOfSearching.forEach(teacher => {
+            const teacherCard = createTeacherCard(teacher)
+            container.appendChild(teacherCard)
         })
     })
 
@@ -63,6 +89,18 @@ document.addEventListener('DOMContentLoaded', function () {
             closeDetailedPopupFunc()
         }
     })
+
+
+    // get table with statistics
+    const tableWithStats = document.getElementById('teacherTable')
+    const headers = tableWithStats.querySelectorAll('th')
+    headers.forEach(currentHeader =>
+    currentHeader.addEventListener('click', function () {
+        sortAndUpdateStatisticsTable(currentHeader)
+
+        updateSortByIndicator(currentHeader, currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc')
+
+    }))
 
 
     function openPopup() {
@@ -119,6 +157,17 @@ document.addEventListener('DOMContentLoaded', function () {
         content.classList.remove('blurred')
     }
 
+
+    function addOptionsOfCountries() {
+        // add options of countries
+        for(let option of allUsersCountries) {
+            const newOption = document.createElement('option')
+            newOption.value = option
+            newOption.textContent = option
+            countryFilter.appendChild(newOption)
+        }
+    }
+
     function createTeacherCard(teacher) {
         const card = document.createElement('div')
         card.classList.add('teacher-card')
@@ -171,9 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
             isPhoto = undefined
 
         let filteredTeachers = filterUsers(teachers, chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
-        while (container.firstChild) {
-            container.removeChild(container.firstChild)
-        }
+        removeAllTeachersCardsFromGrid()
 
         // TODO: remove console log
         console.log('FILTERED LOOK HERE')
@@ -183,6 +230,69 @@ document.addEventListener('DOMContentLoaded', function () {
             const teacherCard = createTeacherCard(teacher);
             container.appendChild(teacherCard)
         });
+    }
+
+
+    function sortAndUpdateStatisticsTable(currentHeader) {
+        // remove all rows from the table
+        const oldRows = tableWithStats.querySelectorAll('tr:not(:first-child)')
+        oldRows.forEach(row => row.remove())
+
+        const col = currentHeader.getAttribute('data-column')
+        const sortOrder = currentHeader.getAttribute('data-order')
+        console.log(`ORDER SORT BY ${sortOrder}`)
+
+        // get sorted array of teachers
+        console.log(`data for sorting => col = ${col}, sortOrder = ${sortOrder}`)
+        let sortedTeachers = sortUsers(teachers, col, sortOrder)
+
+        const tBody = tableWithStats.querySelector('tbody')
+        // TODO: delete comment
+        //tBody.innerHTML = ''
+
+       // const tableRows = Array.from(tableWithStats.querySelectorAll('tbody tr'))
+        sortedTeachers.forEach(teacher => {
+            const row = document.createElement('tr')
+
+            const nameCell = document.createElement('td')
+            nameCell.textContent = teacher.full_name
+
+            const specialityCell = document.createElement('td')
+            specialityCell.textContent = teacher.course
+
+            const ageCell = document.createElement('td')
+            ageCell.textContent = teacher.age
+
+            const countryCell = document.createElement('td')
+            countryCell.textContent = teacher.country
+
+            row.appendChild(nameCell)
+            row.appendChild(specialityCell)
+            row.appendChild(ageCell)
+            row.appendChild(countryCell)
+
+            tBody.appendChild(row);
+    })
+    }
+
+
+    function updateSortByIndicator(header, order) {
+        console.log(`header ${header} must be changed to ${order}`)
+        header.setAttribute('data-order', order)
+
+        // Оновлення поточного індикатора
+        if (order === 'asc') {
+            header.querySelector('p').textContent = '↑';
+        } else {
+            header.querySelector('p').textContent = '↓';
+        }
+    }
+
+
+    function removeAllTeachersCardsFromGrid() {
+        while (container.firstChild) {
+            container.removeChild(container.firstChild)
+        }
     }
 });
 
