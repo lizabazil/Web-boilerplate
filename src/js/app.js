@@ -159,7 +159,34 @@ document.addEventListener('DOMContentLoaded', function () {
         phone.textContent = teacher.phone
 
         const star = document.querySelector('#detailedPopup .star')
-        teacher.favorite ? star.style.display = 'block' : star.style.display = 'none'
+        if(teacher.favorite)
+            star.style.display = 'block'
+        else {
+            star.style.color = 'gray'
+        }
+
+        star.addEventListener('click', function () {
+            // change the attribute 'favorite' of teacher
+            let teachers = JSON.parse(localStorage.getItem("teachers"))
+            const teacherIndex = teachers.findIndex(findTeacher =>
+            findTeacher.id === teacher.id)
+
+            teachers[teacherIndex].favorite = !teacher.favorite
+            localStorage.setItem("teachers", JSON.stringify(teachers))
+
+            teacher.favorite = !teacher.favorite
+
+            // change the color of star depending on the new status of teacher (favorite or not)
+            if(teacher.favorite) {
+                star.style.display = 'block'
+                star.style.color = 'gold'
+            }
+            else {
+                star.style.color = 'gray'
+            }
+
+        })
+
 
         const teacherNote = document.querySelector('.detailed-part-2')
         teacherNote.textContent = teacher.note
@@ -173,6 +200,9 @@ document.addEventListener('DOMContentLoaded', function () {
         detailedPopupOverlay.style.display = 'none'
         content.classList.remove('blurred')
     }
+
+
+
 
 
     function addOptionsOfCountries() {
