@@ -322,7 +322,18 @@
                <label class=label-at-start for="selectSpeciality">Speciality</label><br>
                <select class="select-speciality" id="selectSpeciality">
                   <option value="Mathematics">Mathematics</option>
-                  <option value="Art">Art</option>
+                  <option value="Physics">Physics</option>
+                  <option value="English">English</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Dancing">Dancing</option>
+                  <option value="Chess">Chess</option>
+                  <option value="Biology">Biology</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Law">Law</option>
+                  <option value="Art">LArt</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Statistics">Statistics</option>
+
                </select>
                </div>
 
@@ -332,8 +343,23 @@
                <div class="one-line-in-form">
 
                <select class="select-country" id="selectCountry">
-                  <option value="Ukraine">Ukraine</option>
-                  <option value="USA">USA</option>
+                  <option value="Germany">Germany</option>
+                  <option value="Ireland">Ireland</option>
+                  <option value="Australia">Australia</option>
+                  <option value="United States">United States</option>
+                  <option value="Finland">Finland</option>
+                  <option value="Turkey">Turkey</option>
+                  <option value="Switzerland">Switzerland</option>
+                  <option value="New Zealand">New Zealand</option>
+                  <option value="Spain">Spain</option>
+                  <option value="Norway">Norway</option>
+                  <option value="Denmark">Denmark</option>
+                  <option value="Iran">Iran</option>
+                  <option value="Canada">Canada</option>
+                  <option value="France">France</option>
+                  <option value="Netherlands">Netherlands</option>
+
+
                </select>
 
                <input type="text" id="newTeacherCity" name="newTeacherCity">
@@ -357,8 +383,8 @@
                <div class="radio-add-teacher-sex">
                   <label class="label-at-start">Sex</label>
                   <div class="radio-options">
-               <label><input type="radio" value="Male">Male</label>
-               <label><input type="radio" value="Female">Female</label>
+               <label><input type="radio" value="Male" name="gender">Male</label>
+               <label><input type="radio" value="Female" name="gender">Female</label>
                   </div>
                </div>
 
@@ -373,7 +399,7 @@
 
             </form>
 
-            <button onclick="submitForm()">Add</button>
+            <button class="submitForm">Add</button>
          </div>
 
       </div>
@@ -430,9 +456,7 @@
 
 <body itemscope itemtype="http://schema.org/WebPage">
 
-<script type="module" src="js/app.js">import {additionalUsers} from "src/js/FE4U-Lab2-mock.js";
-import {randomUserMock} from "src/js/FE4U-Lab2-mock.js";
-import {getFormattedUsers} from "./js/lab2.js";
+<script type="module" src="js/app.js">
 </script>
 
 </body>

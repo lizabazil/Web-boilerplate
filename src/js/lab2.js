@@ -362,7 +362,7 @@ console.log(searchByNameNoteOrAge(searchParameter, formatted))
 
 
 // task 6
-
+/*
 console.log('TASK 6-------------------------------------------------------------------------')
 console.log('Search value => 65')
 console.log(getPercentageOfUsersInSearching('65', formatted))
@@ -379,3 +379,4 @@ console.log(getPercentageOfUsersInSearching('=24', formatted))
 
 console.log('Search value => <38')
 console.log(getPercentageOfUsersInSearching('<38', formatted))
+ */

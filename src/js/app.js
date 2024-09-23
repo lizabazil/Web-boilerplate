@@ -1,13 +1,22 @@
-//import { getFormattedUsers } from "src/js/lab2.js";
  /*const testModules = require('./test-module');
 require('../css/app.css');*/
 
 import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge} from "./lab2.js";
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
+import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 const allUsersCountries = new Set()
 
-/** ******** Your code here! *********** */
+// use localStorage to store all teachers
+let teachers = JSON.parse(localStorage.getItem("teachers")) || []
+if(teachers.length === 0) {
+    const notValidatedTeachers = getFormattedUsers(randomUserMock, additionalUsers)
+    teachers = notValidatedTeachers.filter(current => validateUser(current))
+    localStorage.setItem('teachers', JSON.stringify(teachers))
+}
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const buttonsAddTeacher = document.querySelectorAll('.button-add-teacher')
     buttonsAddTeacher.forEach(el => el.addEventListener('click', event => {
@@ -44,12 +53,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    const notValidatedTeachers = getFormattedUsers(randomUserMock, additionalUsers)
-    const teachers = notValidatedTeachers.filter(current => validateUser(current))
+
 
 
     const container = document.getElementsByClassName('teachers-grid')[0];
-    teachers.forEach(teacher => {
+    let currentTeachers =  JSON.parse(localStorage.getItem("teachers"))
+    currentTeachers.forEach(teacher => {
         // add teacher's country to the set
         allUsersCountries.add(teacher.country)
 
@@ -66,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchValue = document.getElementById('searchInput').value
         document.getElementById('searchInput').value = ''
 
-        const resultOfSearching = searchByNameNoteOrAge(searchValue, teachers)
+        const resultOfSearching = searchByNameNoteOrAge(searchValue, JSON.parse(localStorage.getItem("teachers")))
         removeAllTeachersCardsFromGrid()
 
         resultOfSearching.forEach(teacher => {
@@ -103,6 +112,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }))
 
 
+    const buttonForSubmitFormAddTeacher = document.querySelectorAll('.submitForm')
+
+    buttonForSubmitFormAddTeacher.forEach(but => {
+        but.addEventListener('click', submitFormAndAddTeacher)
+    })
+
+
     function openPopup() {
         popupOverlay.style.display = 'inline-block'
         content.classList.add('blurred')
@@ -119,7 +135,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // set info about teacher in the popup
         const image = document.querySelector('.detailed-image')
-        image.src = teacher.picture_large
+        if(!teacher.picture_large) image.src = "/src/images/default_avatar.jpg"
+        else image.src = teacher.picture_large
         image.alt = teacher.full_name
 
         const name = document.querySelector('.detailed-name')
@@ -129,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
         speciality.textContent = teacher.course
 
         const location = document.querySelector('.detailed-location')
-        location.textContent = teacher.state + ', ' + teacher.country
+        location.textContent = teacher.city + ', ' + teacher.country
 
         const ageGender = document.querySelector('.detailed-age-gender')
         ageGender.textContent = `${teacher.age}, ${teacher.gender}`
@@ -147,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const teacherNote = document.querySelector('.detailed-part-2')
         teacherNote.textContent = teacher.note
 
-        const address = `${teacher.country}, ${teacher.state}`
+        const address = `${teacher.country}, ${teacher.city}`
         const googleMapsLink = document.querySelector('.toggle-map')
         googleMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
     }
@@ -174,9 +191,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const imageContainer = document.createElement('div')
         imageContainer.classList.add('image-container')
 
-        // Додавання зображення вчителя
         const img = document.createElement('img')
-        img.src = teacher.picture_thumbnail
+        if(!teacher.picture_thumbnail) img.src = "/src/images/default_avatar.jpg"
+        else
+            img.src = teacher.picture_thumbnail
         img.alt = teacher.full_name
         imageContainer.appendChild(img)
 
@@ -191,7 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const surname = document.createElement('p')
         surname.classList.add('teacher-name')
-        surname.innerText = teacher.full_name.split(' ')[1]
+        surname.innerText = teacher.full_name.split(' ')[1] === undefined ? '' : teacher.full_name.split(' ')[1]
+
 
         const speciality = document.createElement('p');
         speciality.classList.add('teacher-speciality');
@@ -219,12 +238,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if(!isPhoto)
             isPhoto = undefined
 
-        let filteredTeachers = filterUsers(teachers, chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
+        let filteredTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
         removeAllTeachersCardsFromGrid()
 
-        // TODO: remove console log
-        console.log('FILTERED LOOK HERE')
-        console.log(filteredTeachers)
         // show user filtered teachers on the page
         filteredTeachers.forEach(teacher => {
             const teacherCard = createTeacherCard(teacher);
@@ -244,13 +260,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // get sorted array of teachers
         console.log(`data for sorting => col = ${col}, sortOrder = ${sortOrder}`)
-        let sortedTeachers = sortUsers(teachers, col, sortOrder)
+        let sortedTeachers = sortUsers(JSON.parse(localStorage.getItem("teachers")), col, sortOrder)
 
         const tBody = tableWithStats.querySelector('tbody')
-        // TODO: delete comment
-        //tBody.innerHTML = ''
-
-       // const tableRows = Array.from(tableWithStats.querySelectorAll('tbody tr'))
         sortedTeachers.forEach(teacher => {
             const row = document.createElement('tr')
 
@@ -277,10 +289,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function updateSortByIndicator(header, order) {
-        console.log(`header ${header} must be changed to ${order}`)
         header.setAttribute('data-order', order)
 
-        // Оновлення поточного індикатора
         if (order === 'asc') {
             header.querySelector('p').textContent = '↑';
         } else {
@@ -294,6 +304,69 @@ document.addEventListener('DOMContentLoaded', function () {
             container.removeChild(container.firstChild)
         }
     }
+
+
+    function submitFormAndAddTeacher() {
+        const name = document.getElementById('newTeacherName').value
+        const speciality = document.getElementById('selectSpeciality').value
+        const country = document.getElementById('selectCountry').value
+        const city = document.getElementById('newTeacherCity').value
+        const email = document.getElementById('newTeacherEmail').value
+        const phone = document.getElementById('newTeacherPhone').value
+        const dateOfBirth = document.getElementById('newTeacherDate').value
+        const gender = document.querySelector('input[name="gender"]:checked').value
+        const backgroundColor = document.querySelector('input[type="color"]').value
+        const notes = document.getElementById("notes").value
+
+
+        const newTeacher = {
+            id: uuidv4(),
+            full_name: name,
+            gender: gender,
+            course: speciality,
+            country: country,
+            city: city,
+            email: email,
+            phone: phone,
+            b_date: dateOfBirth,
+            age: countAge(dateOfBirth),
+            state: 'Undefined',
+            bg_color: backgroundColor,
+            note: notes
+        }
+
+        if(validateUser(newTeacher)) {
+            let teachersForNow = JSON.parse(localStorage.getItem("teachers"))
+            teachersForNow.push(newTeacher)
+            localStorage.setItem("teachers", JSON.stringify(teachersForNow))
+
+            closeDetailedPopupFunc()
+        }
+        else
+            window.alert('Adding new teacher was unsuccessful.')
+
+    }
+
+
+    function countAge(dateOfBirth) {
+        const pastDate = new Date(dateOfBirth)
+        const currentDate = new Date()
+
+        let yearsDifference = currentDate.getFullYear() - pastDate.getFullYear()
+
+        const isBeforeBirthdayThisYear =
+            currentDate.getMonth() < pastDate.getMonth() ||
+            (currentDate.getMonth() === pastDate.getMonth() && currentDate.getDate() < pastDate.getDate())
+
+        if (isBeforeBirthdayThisYear)
+            yearsDifference--
+
+        return yearsDifference
+    }
+
 });
+
+
+
 
 //console.log(testModules.hello);
