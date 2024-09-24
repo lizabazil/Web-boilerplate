@@ -111,12 +111,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }))
 
+    // when the page is loading, the table will be sorted by age of teachers
+    sortAndUpdateStatisticsTable(tableWithStats.querySelectorAll('th')[2])
 
-    const buttonForSubmitFormAddTeacher = document.querySelectorAll('.submitForm')
 
-    buttonForSubmitFormAddTeacher.forEach(but => {
-        but.addEventListener('click', submitFormAndAddTeacher)
-    })
+    const buttonForSubmitFormAddTeacher = document.querySelector('.submitForm')
+
+    buttonForSubmitFormAddTeacher.addEventListener('click', function () {
+            submitFormAndAddTeacher()
+            clearFormForAddingTeacher()
+        })
+
 
 
     function openPopup() {
@@ -159,8 +164,10 @@ document.addEventListener('DOMContentLoaded', function () {
         phone.textContent = teacher.phone
 
         const star = document.querySelector('#detailedPopup .star')
-        if(teacher.favorite)
+        if(teacher.favorite) {
             star.style.display = 'block'
+            star.style.color = 'gold'
+        }
         else {
             star.style.color = 'gray'
         }
@@ -170,6 +177,10 @@ document.addEventListener('DOMContentLoaded', function () {
             let teachers = JSON.parse(localStorage.getItem("teachers"))
             const teacherIndex = teachers.findIndex(findTeacher =>
             findTeacher.id === teacher.id)
+
+            window.alert('searching index...')
+
+            console.log(`teacher id = ${teacher.id}, found teacher index = ${teachers[teacherIndex].id}`)
 
             teachers[teacherIndex].favorite = !teacher.favorite
             localStorage.setItem("teachers", JSON.stringify(teachers))
@@ -230,7 +241,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const star = document.createElement('div')
         star.classList.add('star')
-        teacher.favorite ? star.innerText = '★' : star.innerText = ''
+
+        if(teacher.favorite)
+            star.innerText = '★'
+        else star.innerText = ''
+
         imageContainer.appendChild(star);
 
         const firstName = document.createElement('p');
@@ -269,6 +284,8 @@ document.addEventListener('DOMContentLoaded', function () {
             isPhoto = undefined
 
         let filteredTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
+        console.log('FILTERED')
+        console.log(filteredTeachers)
         removeAllTeachersCardsFromGrid()
 
         // show user filtered teachers on the page
@@ -286,10 +303,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const col = currentHeader.getAttribute('data-column')
         const sortOrder = currentHeader.getAttribute('data-order')
-        console.log(`ORDER SORT BY ${sortOrder}`)
 
         // get sorted array of teachers
-        console.log(`data for sorting => col = ${col}, sortOrder = ${sortOrder}`)
         let sortedTeachers = sortUsers(JSON.parse(localStorage.getItem("teachers")), col, sortOrder)
 
         const tBody = tableWithStats.querySelector('tbody')
@@ -370,11 +385,22 @@ document.addEventListener('DOMContentLoaded', function () {
             teachersForNow.push(newTeacher)
             localStorage.setItem("teachers", JSON.stringify(teachersForNow))
 
-            closeDetailedPopupFunc()
+            closePopupFunc()
         }
         else
             window.alert('Adding new teacher was unsuccessful.')
 
+    }
+
+    function clearFormForAddingTeacher() {
+        document.getElementById('newTeacherName').value = ''
+        document.getElementById('selectSpeciality').value = 'Mathematics'
+        document.getElementById('selectCountry').value = 'Germany'
+        document.getElementById('newTeacherCity').value = 'Berlin'
+        document.getElementById('newTeacherEmail').value = ''
+        document.getElementById('newTeacherPhone').value = ''
+        document.getElementById('newTeacherDate').value = ''
+        document.getElementById('notes').value = ''
     }
 
 
@@ -393,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return yearsDifference
     }
+
 
 });
 

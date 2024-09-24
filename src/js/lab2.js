@@ -25,7 +25,7 @@ function generateUserBgColor() {
 export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
     let formattedUserMock = arrayOfRandomUsers.map(currentUser => ({
         "id": uuidv4(),
-        "favorite": Math.random() < 0.5, // generating random True/False
+        "favorite": false, // generating random True/False
         "course": generateUserCourse(),
         "bg_color": generateUserBgColor(),
         "note": `Note about ${currentUser.name.first}`,
