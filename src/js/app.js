@@ -165,11 +165,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const star = document.querySelector('#detailedPopup .star')
         if(teacher.favorite) {
-            star.style.display = 'block'
-            star.style.color = 'gold'
+            star.innerText = '★'
         }
         else {
-            star.style.color = 'gray'
+            star.innerText = '☆'
         }
 
         star.addEventListener('click', function () {
@@ -178,8 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const teacherIndex = teachers.findIndex(findTeacher =>
             findTeacher.id === teacher.id)
 
-            window.alert('searching index...')
-
             console.log(`teacher id = ${teacher.id}, found teacher index = ${teachers[teacherIndex].id}`)
 
             teachers[teacherIndex].favorite = !teacher.favorite
@@ -187,14 +184,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             teacher.favorite = !teacher.favorite
 
-            // change the color of star depending on the new status of teacher (favorite or not)
+            // change the state of star depending on the new status of teacher (favorite or not)
             if(teacher.favorite) {
-                star.style.display = 'block'
-                star.style.color = 'gold'
+                star.innerText = '★'
             }
-            else {
-                star.style.color = 'gray'
-            }
+            else
+                star.innerText = '☆'
+
 
         })
 
