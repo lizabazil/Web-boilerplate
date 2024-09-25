@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteFilter = document.getElementById('favoriteFilter')
     const allFilters = [ageFilter, countryFilter, genderFilter, photoFilter, favoriteFilter]
 
+    // buttons to move the list of favorite teachers
+    const moveButtonRight = document.getElementById('move-button-right')
+    const moveButtonLeft = document.getElementById('move-button-left')
+
     allFilters.forEach(current => {
         current.addEventListener('change', function () {
             filterTeachersOnPage(ageFilter.value, countryFilter.value, photoFilter.checked, genderFilter.value, favoriteFilter.checked)
@@ -52,7 +56,19 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
 
+    moveButtonRight.addEventListener('click', function () {
+        if (startIndex + maxVisibleTeachers < teachers.length) {
+            startIndex += maxVisibleTeachers
+            updateVisibleItemsOfFavoritesTeachers()
+        }
+    })
 
+    moveButtonLeft.addEventListener('click', function () {
+        if (startIndex > 0) {
+            startIndex -= maxVisibleTeachers
+            updateVisibleItemsOfFavoritesTeachers()
+        }
+    })
 
 
 
@@ -172,8 +188,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const speciality = document.querySelector('.detailed-speciality')
         speciality.textContent = teacher.course
 
-        const location = document.querySelector('.detailed-location')
-        location.textContent = teacher.city + ', ' + teacher.country
+        const teacherLocation = document.querySelector('.detailed-location')
+        teacherLocation.textContent = teacher.city + ', ' + teacher.country
 
         const ageGender = document.querySelector('.detailed-age-gender')
         ageGender.textContent = `${teacher.age}, ${teacher.gender}`
@@ -210,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else
                 star.innerText = '☆'
-
+            location.reload()
 
         })
 
@@ -457,7 +473,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const containerWithFavorites = document.getElementById('short-teacher-list-bottom')
-        const moveButtonRight = document.getElementById('move-button-right')
 
         // take only 5 teachers
         for(let i = 0; i < 5; i++) {
@@ -471,7 +486,39 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    showFavoriteTeachers()
+
+    const maxVisibleTeachers = 5
+    let startIndex = 0
+
+    function updateVisibleItemsOfFavoritesTeachers() {
+        const containerWithFavorites = document.getElementById('short-teacher-list-bottom')
+
+        // remove previous set of favorite teachers
+        const teachersCardsToRemove = containerWithFavorites.querySelectorAll('.teacher-card')
+        teachersCardsToRemove.forEach(elem => {elem.remove()})
+
+        const teachers = JSON.parse(localStorage.getItem('teachers'))
+        const favoriteTeachers = teachers.filter(teacher => teacher.favorite === true)
+        const visibleTeachers = favoriteTeachers.slice(startIndex, startIndex + maxVisibleTeachers)
+
+        visibleTeachers.forEach(teacher => {
+            const card = createTeacherCard(teacher)
+            containerWithFavorites.insertBefore(card, moveButtonRight)
+
+            card.addEventListener('click', function () {
+                openDetailedTeacherPopup(teacher)
+            })
+        })
+
+        // hide buttons in some cases
+        moveButtonLeft.style.visibility = startIndex === 0 ? 'hidden' : 'visible'
+        moveButtonRight.style.visibility = startIndex + maxVisibleTeachers >= favoriteTeachers.length ? 'hidden' : 'visible'
+
+    }
+
+
+
+    updateVisibleItemsOfFavoritesTeachers()
 
 });
 
