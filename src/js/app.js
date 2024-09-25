@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    const container = document.getElementsByClassName('teachers-grid')[0];
+    const container = document.getElementsByClassName('teachers-grid')[0]
     let currentTeachers =  JSON.parse(localStorage.getItem("teachers"))
     currentTeachers.forEach(teacher => {
         // add teacher's country to the set
@@ -66,6 +66,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const teacherCard = createTeacherCard(teacher);
         container.appendChild(teacherCard)
     });
+
+    container.addEventListener('click', function (event) {
+        const card = event.target.closest('.teacher-card')
+        if(card) {
+            const teacherData = {
+                id: card.teacherId,
+                full_name: card.teacherFullName,
+                course: card.teacherCourse,
+                city: card.teacherCity,
+                country: card.teacherCountry,
+                age: card.teacherAge,
+                gender: card.teacherGender,
+                email: card.teacherEmail,
+                phone: card.teacherPhone,
+                favorite: card.teacherFavorite,
+                picture_large: card.photo
+
+            }
+
+            openDetailedTeacherPopup(teacherData)
+        }
+    })
 
     addOptionsOfCountries()
 
@@ -177,8 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const teacherIndex = teachers.findIndex(findTeacher =>
             findTeacher.id === teacher.id)
 
-            console.log(`teacher id = ${teacher.id}, found teacher index = ${teachers[teacherIndex].id}`)
-
             teachers[teacherIndex].favorite = !teacher.favorite
             localStorage.setItem("teachers", JSON.stringify(teachers))
 
@@ -229,9 +249,9 @@ document.addEventListener('DOMContentLoaded', function () {
         imageContainer.classList.add('image-container')
 
         const img = document.createElement('img')
-        if(!teacher.picture_thumbnail) img.src = "/src/images/default_avatar.jpg"
+        if(!teacher.picture_large) img.src = "/src/images/default_avatar.jpg"
         else
-            img.src = teacher.picture_thumbnail
+            img.src = teacher.picture_large
         img.alt = teacher.full_name
         imageContainer.appendChild(img)
 
@@ -253,22 +273,34 @@ document.addEventListener('DOMContentLoaded', function () {
         surname.innerText = teacher.full_name.split(' ')[1] === undefined ? '' : teacher.full_name.split(' ')[1]
 
 
-        const speciality = document.createElement('p');
-        speciality.classList.add('teacher-speciality');
-        speciality.innerText = teacher.course;
+        const speciality = document.createElement('p')
+        speciality.classList.add('teacher-speciality')
+        speciality.innerText = teacher.course
 
-        const country = document.createElement('p');
-        country.classList.add('teacher-country');
-        country.innerText = teacher.country;
+        const country = document.createElement('p')
+        country.classList.add('teacher-country')
+        country.innerText = teacher.country
 
-        card.appendChild(imageContainer);
-        card.appendChild(firstName);
-        card.appendChild(surname);
-        card.appendChild(speciality);
-        card.appendChild(country);
-        card.addEventListener('click', function () {
-            openDetailedTeacherPopup(teacher)
-        });
+        card.appendChild(imageContainer)
+        card.appendChild(firstName)
+        card.appendChild(surname)
+        card.appendChild(speciality)
+        card.appendChild(country)
+
+        // store teacher's info for detailed popup
+        card.teacherId = teacher.id
+        card.teacherFullName = teacher.full_name
+        card.teacherCourse = teacher.course
+        card.teacherCity = teacher.city
+        card.teacherCountry = teacher.country
+        card.teacherAge = teacher.age
+        card.teacherGender = teacher.gender
+        card.teacherEmail = teacher.email
+        card.teacherPhone = teacher.phone
+        card.teacherFavorite = teacher.favorite
+        card.photo = teacher.picture_large
+
+
         return card
     }
 
@@ -280,8 +312,6 @@ document.addEventListener('DOMContentLoaded', function () {
             isPhoto = undefined
 
         let filteredTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
-        console.log('FILTERED')
-        console.log(filteredTeachers)
         removeAllTeachersCardsFromGrid()
 
         // show user filtered teachers on the page
@@ -416,6 +446,32 @@ document.addEventListener('DOMContentLoaded', function () {
         return yearsDifference
     }
 
+
+    function showFavoriteTeachers() {
+        const allTeachers = JSON.parse(localStorage.getItem('teachers'))
+        const favorites = allTeachers.filter(current => current.favorite === true)
+
+        if(favorites.length === 0) {
+            document.getElementById('move-button-left').style.display = 'none'
+            document.getElementById('move-button-right').style.display = 'none'
+        }
+
+        const containerWithFavorites = document.getElementById('short-teacher-list-bottom')
+        const moveButtonRight = document.getElementById('move-button-right')
+
+        // take only 5 teachers
+        for(let i = 0; i < 5; i++) {
+            const currentTeacher = favorites[i]
+            const card = createTeacherCard(currentTeacher)
+            containerWithFavorites.insertBefore(card, moveButtonRight)
+
+            card.addEventListener('click', function () {
+                openDetailedTeacherPopup(currentTeacher)
+            })
+        }
+    }
+
+    showFavoriteTeachers()
 
 });
 

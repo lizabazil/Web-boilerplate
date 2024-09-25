@@ -198,7 +198,7 @@ hr {
 
 .short-teacher-list-bottom {
     display: flex;
-
+    gap: 40px;
 }
 
 .source-name {
@@ -429,7 +429,7 @@ th:hover {
 }
 
 .move-button {
-    font-size: 80px;
+    font-size: 130px;
     margin-top: 90px;
     color: gray;
     text-decoration: none;
@@ -574,3 +574,12 @@ th:hover {
 
 }
 
+#move-button-right {
+    position: absolute;
+    right: 20px;
+}
+
+#move-button-left {
+    position: absolute;
+    left: 20px;
+}
