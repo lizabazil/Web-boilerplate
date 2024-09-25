@@ -152,14 +152,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // when the page is loading, the table will be sorted by age of teachers
     sortAndUpdateStatisticsTable(tableWithStats.querySelectorAll('th')[2])
 
-
-    const buttonForSubmitFormAddTeacher = document.querySelector('.submitForm')
-
-    buttonForSubmitFormAddTeacher.addEventListener('click', function () {
-            submitFormAndAddTeacher()
-            clearFormForAddingTeacher()
-        })
-
+    // submit form for adding a teacher
+    const formAddTeacher = document.getElementById('form-add-teacher')
+    formAddTeacher.addEventListener('submit', function (event) {
+        event.preventDefault()
+        submitFormAndAddTeacher()
+        clearFormForAddingTeacher()
+    })
 
 
     function openPopup() {
