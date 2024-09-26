@@ -24,15 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }))
 
 
-    // take all teacher cards in order to make popup with detailed info about teacher
-    const teacherCardsInTop = document.querySelectorAll('.teacher-card')
-    teacherCardsInTop.forEach(el => el.addEventListener('click', Event => {
-        openDetailedTeacherPopup()
-    }))
-
-
-    const popup = document.getElementById('popupOverlay')
-
     const closePopup = document.getElementById('closePopup')
     const closeDetailedPopup = document.getElementById('closeDetailedPopup')
     const content = document.getElementById('page-content')
@@ -97,10 +88,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 email: card.teacherEmail,
                 phone: card.teacherPhone,
                 favorite: card.teacherFavorite,
-                picture_large: card.photo
+                picture_large: card.photo,
+                note: card.note
 
             }
-
             openDetailedTeacherPopup(teacherData)
         }
     })
@@ -316,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
         card.teacherPhone = teacher.phone
         card.teacherFavorite = teacher.favorite
         card.photo = teacher.picture_large
+        card.note = teacher.note
 
 
         return card
@@ -439,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('newTeacherName').value = ''
         document.getElementById('selectSpeciality').value = 'Mathematics'
         document.getElementById('selectCountry').value = 'Germany'
-        document.getElementById('newTeacherCity').value = 'Berlin'
+        document.getElementById('newTeacherCity').value = ''
         document.getElementById('newTeacherEmail').value = ''
         document.getElementById('newTeacherPhone').value = ''
         document.getElementById('newTeacherDate').value = ''
@@ -463,31 +455,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return yearsDifference
     }
 
-
-    function showFavoriteTeachers() {
-        const allTeachers = JSON.parse(localStorage.getItem('teachers'))
-        const favorites = allTeachers.filter(current => current.favorite === true)
-
-        if(favorites.length === 0) {
-            document.getElementById('move-button-left').style.display = 'none'
-            document.getElementById('move-button-right').style.display = 'none'
-        }
-
-        const containerWithFavorites = document.getElementById('short-teacher-list-bottom')
-
-        // take only 5 teachers
-        for(let i = 0; i < 5; i++) {
-            const currentTeacher = favorites[i]
-            const card = createTeacherCard(currentTeacher)
-            containerWithFavorites.insertBefore(card, moveButtonRight)
-
-            card.addEventListener('click', function () {
-                openDetailedTeacherPopup(currentTeacher)
-            })
-        }
-    }
-
-
     const maxVisibleTeachers = 5
     let startIndex = 0
 
@@ -500,6 +467,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const teachers = JSON.parse(localStorage.getItem('teachers'))
         const favoriteTeachers = teachers.filter(teacher => teacher.favorite === true)
+
+        // get the needed amount of favorites
         const visibleTeachers = favoriteTeachers.slice(startIndex, startIndex + maxVisibleTeachers)
 
         visibleTeachers.forEach(teacher => {
@@ -514,7 +483,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // hide buttons in some cases
         moveButtonLeft.style.visibility = startIndex === 0 ? 'hidden' : 'visible'
         moveButtonRight.style.visibility = startIndex + maxVisibleTeachers >= favoriteTeachers.length ? 'hidden' : 'visible'
-
     }
 
 
