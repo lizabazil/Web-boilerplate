@@ -268,6 +268,8 @@ document.addEventListener('DOMContentLoaded', function () {
         else
             img.src = teacher.picture_large
         img.alt = teacher.full_name
+        img.style.border = `3px solid ${teacher.bg_color}`
+
         imageContainer.appendChild(img)
 
         const star = document.createElement('div')
