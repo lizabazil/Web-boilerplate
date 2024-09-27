@@ -1,7 +1,7 @@
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
-//import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
+import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
 // TODO: change import for working with page
-import {v4 as uuidv4 } from 'uuid'
+//import {v4 as uuidv4 } from 'uuid'
 
 // list of all courses
 const courses = ["Mathematics", "Physics", "English", "Computer Science", "Dancing", "Chess", "Biology", "Chemistry",
@@ -25,7 +25,7 @@ function generateUserBgColor() {
 export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
     let formattedUserMock = arrayOfRandomUsers.map(currentUser => ({
         "id": uuidv4(),
-        "favorite": Math.random() < 0.5, // generating random True/False
+        "favorite": false, // generating random True/False
         "course": generateUserCourse(),
         "bg_color": generateUserBgColor(),
         "note": `Note about ${currentUser.name.first}`,
@@ -61,7 +61,7 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
 
 
 // task 2
-function validateUser(user) {
+export function validateUser(user) {
     return isStringAndStartsWithCapitalLetter(user.full_name)
     && isStringAndStartsWithCapitalLetter(user.gender)
     && isStringAndStartsWithCapitalLetter(user.note)
@@ -91,20 +91,27 @@ function isValidPhoneNumber(phoneNumber) {
 
 // task 3
 //filter the array of users by specified values
-function filterUsers(arrayOfUsers, chosenCountry, chosenAge, chosenGender, chosenFavorite) {
+export function filterUsers(arrayOfUsers, chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite) {
     return arrayOfUsers.filter(user => {
         return (
-            (chosenCountry === undefined || chosenCountry === user.country)
-            && (chosenAge === undefined || chosenAge === user.age)
-            && (chosenGender === undefined || chosenGender === user.gender)
+            (chosenCountry === undefined || chosenCountry === 'all' || chosenCountry === user.country)
+            && (chosenAge === undefined || chosenAge === 'all' || checkAgeInRange(chosenAge, user.age))
+            && (chosenGender === undefined || chosenGender === 'all' || chosenGender === user.gender)
+                && (isPhoto === undefined || (user.picture_large != null && user.picture_thumbnail != null))
             && (chosenFavorite === undefined || chosenFavorite === user.favorite)
         )
         })
 }
 
+function checkAgeInRange(chosenAge, userAge) {
+    const [minAge, maxAge] = chosenAge.split('-').map(Number)
+    return userAge >= minAge && userAge <= maxAge
+}
+
 
 // task 4
-function sortUsers(arrayOfUsers, sortBy, order='asc') {
+export function sortUsers(arrayOfUsers, sortBy, order='asc') {
+    console.log(`sort by = ${sortBy}, order = ${order}`)
     if(sortBy === 'full_name') {
         if(order === 'asc')
             return arrayOfUsers.sort((a, b) => a.full_name.localeCompare(b.full_name))
@@ -128,14 +135,42 @@ function sortUsers(arrayOfUsers, sortBy, order='asc') {
             return arrayOfUsers.sort((a, b) => a.country.localeCompare(b.country))
         else return arrayOfUsers.sort((a, b) => b.country.localeCompare(a.country))
     }
+
+    else if(sortBy === 'course') {
+            return arrayOfUsers.sort( (a, b) =>  {
+                const courseA = a.course === null ? '' : a.course;
+                const courseB = b.course === null ? '' : b.course;
+
+                if (order === 'asc')
+                    return courseA.localeCompare(courseB);
+                 else
+                    return courseB.localeCompare(courseA);
+
+            })
+    }
 }
 
 
 // task 5
 // search by name, note or age and return array with those users
-function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
+export function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
     if(typeof searchValue === 'string') searchValue = searchValue.toLowerCase()
     let resultArray = []
+
+    if(searchValue.charAt(0) === '>' || searchValue.charAt(0) === '<' || searchValue.charAt(0) === '=') {
+        let number = parseInt(searchValue.slice(1))
+        let firstChar = searchValue.charAt(0)
+
+        if(!isNaN(number)) {
+            if (firstChar === '>')
+               return arrayOfUsers.filter(user => user.age > number)
+            else if (firstChar === '<')
+                return arrayOfUsers.filter(user => user.age < number)
+            else
+                return arrayOfUsers.filter(user => user.age == number)
+        }
+    }
+    else
     for(let user of arrayOfUsers) {
         if (
             (user.full_name != null && user.full_name.toLowerCase().includes(searchValue))
@@ -174,17 +209,13 @@ function getPercentageOfUsersInSearching(searchValue, users) {
 // task 1
 console.log('TASK 1-------------------------------------------------------------------------')
 console.log('array of formatted users')
-const formatted = getFormattedUsers(randomUserMock.slice(0), additionalUsers.slice(0))
-//console.log(formatted)
+const formatted = getFormattedUsers(randomUserMock, additionalUsers)
+console.log(formatted)
 
 
 // task 2
-/*
-console.log('TASK 2-------------------------------------------------------------------------')
-console.log('validating user')
-console.log(formatted[0])
-console.log(`result of validating = ${validateUser(formatted[0])}`)
 
+/*
 console.log('-----------------------------------------------------------------------')
 console.log('validating user')
 console.log(formatted[38])
@@ -260,18 +291,8 @@ console.log(`result of validating = ${validateUser(formatted[38])}`)
 
 
 // task 3
+
 /*
-console.log('TASK 3-------------------------------------------------------------------------')
-let filterCountry = 'Germany'
-let filterAge = undefined
-let filterGender = 'Female'
-let filterFavorite = true
-
-let filtered = filterUsers(formatted, filterCountry, filterAge, filterGender, filterFavorite)
-console.log(`FILTERED by country=${filterCountry}, age=${filterAge}, gender=${filterGender}, favorite=${filterFavorite}`)
-console.log(filtered)
-console.log('----------------------------------------------')
-
 filterCountry = 'Norway'
 filterAge = 28
 filterGender = 'Female'
@@ -296,12 +317,7 @@ console.log(filtered)
 
 // task 4
 ///*
-console.log('TASK 4-------------------------------------------------------------------------')
-/*
-console.log('sorted by age desc')
-let sorted = sortUsers(formatted, 'age', 'desc')
-console.log(sorted)
-*/
+
 
 /*
 console.log('-------------------------------------------------')
@@ -329,11 +345,8 @@ console.log(sorted)
 
 // task 5
 console.log('TASK 5-------------------------------------------------------------------------')
-/*
-let searchParameter = 'esat'
-console.log(`searching by name/note/age, parameter = ${searchParameter}`)
-console.log(searchByNameNoteOrAge(searchParameter, formatted))
 
+/*
 searchParameter = 'luc'
 console.log(`searching by name/note/age, parameter = ${searchParameter}`)
 console.log(searchByNameNoteOrAge(searchParameter, formatted))
