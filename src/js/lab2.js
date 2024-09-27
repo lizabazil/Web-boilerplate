@@ -111,7 +111,6 @@ function checkAgeInRange(chosenAge, userAge) {
 
 // task 4
 export function sortUsers(arrayOfUsers, sortBy, order='asc') {
-    console.log(`sort by = ${sortBy}, order = ${order}`)
     if(sortBy === 'full_name') {
         if(order === 'asc')
             return arrayOfUsers.sort((a, b) => a.full_name.localeCompare(b.full_name))

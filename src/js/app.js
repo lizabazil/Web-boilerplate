@@ -7,6 +7,7 @@ import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 const allUsersCountries = new Set()
 
+ /*
 // use localStorage to store all teachers
 let teachers = JSON.parse(localStorage.getItem("teachers")) || []
 if(teachers.length === 0) {
@@ -14,7 +15,7 @@ if(teachers.length === 0) {
     teachers = notValidatedTeachers.filter(current => validateUser(current))
     localStorage.setItem('teachers', JSON.stringify(teachers))
 }
-
+  */
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -23,6 +24,60 @@ document.addEventListener('DOMContentLoaded', function () {
         openPopup()
     }))
 
+
+    // TODO: add to the form allCountries
+
+// -------------------------------------------------------------------------------------------------
+    // get random users from resource
+    let usersFromResource = []
+
+    fetchData().then(() => {
+        console.log('RANDOM USERS');
+        console.log(usersFromResource); // Виведеться лише після завершення всіх запитів
+
+        const formattedTeachers = getFormattedUsers(usersFromResource, [])
+        let teachers = JSON.parse(localStorage.getItem('teachers')) || []
+        if(teachers.length === 0) {
+            // TODO: omit validation ?!
+            //teachers = formattedTeachers.filter(current => validateUser(current))
+            localStorage.setItem('teachers', JSON.stringify(formattedTeachers))
+        }
+
+        removeAllTeachersCardsFromGrid()
+        // add to local storage
+        formattedTeachers.forEach(teacher => {
+            const currentCard = createTeacherCard(teacher)
+            container.appendChild(currentCard)
+        })
+    });
+
+    function fetchData() {
+        const promises = [];
+        for (let i = 0; i < 50; i++) {
+            promises.push(innerTask(i)); // Додаємо кожен запит до масиву промісів
+        }
+        return Promise.all(promises); // Чекаємо на завершення всіх запитів
+    }
+
+    function innerTask(index) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const url = 'https://randomuser.me/api';
+                fetch(url)
+                    .then(response => response.json())
+                    .then(teacher => {
+                        usersFromResource.push(teacher.results[0]);
+                        resolve(); // Завершуємо проміс після успішного додавання в масив
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        reject(err); // Якщо помилка, завершити проміс з помилкою
+                    });
+            }, 100 * index); // Затримка для кожного запиту
+        });
+    }
+
+// -------------------------------------------------------------------------------------------------
 
     const closePopup = document.getElementById('closePopup')
     const closeDetailedPopup = document.getElementById('closeDetailedPopup')
