@@ -7,77 +7,11 @@ import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 const allUsersCountries = new Set()
 
- /*
-// use localStorage to store all teachers
-let teachers = JSON.parse(localStorage.getItem("teachers")) || []
-if(teachers.length === 0) {
-    const notValidatedTeachers = getFormattedUsers(randomUserMock, additionalUsers)
-    teachers = notValidatedTeachers.filter(current => validateUser(current))
-    localStorage.setItem('teachers', JSON.stringify(teachers))
-}
-  */
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const buttonsAddTeacher = document.querySelectorAll('.button-add-teacher')
     buttonsAddTeacher.forEach(el => el.addEventListener('click', event => {
         openPopup()
     }))
-
-
-    // TODO: add to the form allCountries
-
-// -------------------------------------------------------------------------------------------------
-    // get random users from resource
-    let usersFromResource = []
-
-    fetchData().then(() => {
-        console.log('RANDOM USERS');
-        console.log(usersFromResource); // Виведеться лише після завершення всіх запитів
-
-        const formattedTeachers = getFormattedUsers(usersFromResource, [])
-        let teachers = JSON.parse(localStorage.getItem('teachers')) || []
-        if(teachers.length === 0) {
-            // TODO: omit validation ?!
-            //teachers = formattedTeachers.filter(current => validateUser(current))
-            localStorage.setItem('teachers', JSON.stringify(formattedTeachers))
-        }
-
-        removeAllTeachersCardsFromGrid()
-        // add to local storage
-        formattedTeachers.forEach(teacher => {
-            const currentCard = createTeacherCard(teacher)
-            container.appendChild(currentCard)
-        })
-    });
-
-    function fetchData() {
-        const promises = [];
-        for (let i = 0; i < 50; i++) {
-            promises.push(innerTask(i)); // Додаємо кожен запит до масиву промісів
-        }
-        return Promise.all(promises); // Чекаємо на завершення всіх запитів
-    }
-
-    function innerTask(index) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const url = 'https://randomuser.me/api';
-                fetch(url)
-                    .then(response => response.json())
-                    .then(teacher => {
-                        usersFromResource.push(teacher.results[0]);
-                        resolve(); // Завершуємо проміс після успішного додавання в масив
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        reject(err); // Якщо помилка, завершити проміс з помилкою
-                    });
-            }, 100 * index); // Затримка для кожного запиту
-        });
-    }
-
-// -------------------------------------------------------------------------------------------------
 
     const closePopup = document.getElementById('closePopup')
     const closeDetailedPopup = document.getElementById('closeDetailedPopup')
@@ -119,15 +53,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     const container = document.getElementsByClassName('teachers-grid')[0]
-    let currentTeachers =  JSON.parse(localStorage.getItem("teachers"))
-    currentTeachers.forEach(teacher => {
-        // add teacher's country to the set
-        allUsersCountries.add(teacher.country)
 
-        // add teacher's card to the page
-        const teacherCard = createTeacherCard(teacher);
-        container.appendChild(teacherCard)
-    });
+    // submit form for adding a teacher
+    const formAddTeacher = document.getElementById('form-add-teacher')
+    formAddTeacher.addEventListener('submit', function (event) {
+        event.preventDefault()
+        submitFormAndAddTeacher()
+        clearFormForAddingTeacher()
+    })
+
+
+// -------------------------------------------------------------------------------------------------
+    // use localStorage to store all teachers
+    // get data from localStorage
+    // TODO: get from LocalStorage
+    let currentTeachers =  JSON.parse(localStorage.getItem("teachers")) || []
+    if(currentTeachers.length === 0) {
+        fetch2().then(res => {
+            removeAllTeachersCardsFromGrid()
+            addTeachersToLocalStorage(res, false)
+            addTeacherCardsOnPage(res, false)
+        })
+    } else {
+        currentTeachers.forEach(teacher => {
+            // add teacher's country to the set
+            allUsersCountries.add(teacher.country)
+        })
+        addTeacherCardsOnPage(currentTeachers)
+    }
+
+
+
+    function fetch2() {
+        let arr = []
+        const url = 'https://randomuser.me/api/?results=50'
+        return fetch(url)
+            .then(response => response.json())
+            .then(teachers => {
+                arr = teachers.results
+                return arr
+            })
+            .catch(err => console.log(err))
+    }
+
+
+    // add teachers to page and format them if needed
+    function addTeacherCardsOnPage(teachersArr, isFormatted=true) {
+        if(!isFormatted)
+            teachersArr = getFormattedUsers(teachersArr, [])
+        // TODO: validate??
+        teachersArr.forEach(teacher => {
+            const currentCard = createTeacherCard(teacher)
+            container.appendChild(currentCard)
+
+        })
+    }
+
+
+    // add to localStorage and format them before adding (if needed)
+    function addTeachersToLocalStorage(teachers, formatted=true) {
+        if(!formatted)
+            localStorage.setItem('teachers', JSON.stringify(getFormattedUsers(teachers, [])))
+        else localStorage.setItem('teachers', JSON.stringify(teachers))
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+
 
     container.addEventListener('click', function (event) {
         const card = event.target.closest('.teacher-card')
@@ -150,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
             openDetailedTeacherPopup(teacherData)
         }
     })
+
 
     addOptionsOfCountries()
 
@@ -183,29 +176,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
+    const teachersPerPageTable = 10
+    let currentPage = 1
 
     // get table with statistics
+    let mainCurrentHeader
     const tableWithStats = document.getElementById('teacherTable')
     const headers = tableWithStats.querySelectorAll('th')
     headers.forEach(currentHeader =>
     currentHeader.addEventListener('click', function () {
-        sortAndUpdateStatisticsTable(currentHeader)
-
+        changePageTable('prev' ,currentHeader)
+        //currentPage = 0
+        mainCurrentHeader = currentHeader
         updateSortByIndicator(currentHeader, currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc')
 
     }))
 
+
+    document.getElementById('previous-a').addEventListener('click', () => changePageTable('prev', mainCurrentHeader, false));
+    document.getElementById('next-a').addEventListener('click', () => changePageTable('next', mainCurrentHeader, false));
+
+
     // when the page is loading, the table will be sorted by age of teachers
-    sortAndUpdateStatisticsTable(tableWithStats.querySelectorAll('th')[2])
-
-    // submit form for adding a teacher
-    const formAddTeacher = document.getElementById('form-add-teacher')
-    formAddTeacher.addEventListener('submit', function (event) {
-        event.preventDefault()
-        submitFormAndAddTeacher()
-        clearFormForAddingTeacher()
-    })
-
+    changePageTable('prev',tableWithStats.querySelectorAll('th')[2])
 
     function openPopup() {
         popupOverlay.style.display = 'inline-block'
@@ -260,19 +253,21 @@ document.addEventListener('DOMContentLoaded', function () {
             const teacherIndex = teachers.findIndex(findTeacher =>
             findTeacher.id === teacher.id)
 
-            teachers[teacherIndex].favorite = !teacher.favorite
-            localStorage.setItem("teachers", JSON.stringify(teachers))
+            teachers[teacherIndex].favorite = !teachers[teacherIndex].favorite
+            localStorage.clear()
+            addTeachersToLocalStorage(teachers)
 
             teacher.favorite = !teacher.favorite
 
             // change the state of star depending on the new status of teacher (favorite or not)
-            if(teacher.favorite) {
-                star.innerText = '★'
-            }
-            else
-                star.innerText = '☆'
-            location.reload()
+            if(teacher.favorite) star.innerText = '★'
+            else star.innerText = '☆'
 
+            // to refresh all teachers cards
+            //removeAllTeachersCardsFromGrid()
+            //addTeacherCardsOnPage(teachers)
+            //updateVisibleItemsOfFavoritesTeachers()
+            location.reload()
         })
 
 
@@ -351,6 +346,8 @@ document.addEventListener('DOMContentLoaded', function () {
         card.appendChild(country)
 
         // store teacher's info for detailed popup
+        card.dataset.id = teacher.id
+
         card.teacherId = teacher.id
         card.teacherFullName = teacher.full_name
         card.teacherCourse = teacher.course
@@ -363,7 +360,6 @@ document.addEventListener('DOMContentLoaded', function () {
         card.teacherFavorite = teacher.favorite
         card.photo = teacher.picture_large
         card.note = teacher.note
-
 
         return card
     }
@@ -385,20 +381,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function changePageTable(direction, currentHeader, changeSortOrder=true) {
+        const allTeachers = JSON.parse(localStorage.getItem('teachers')) || []
+        const totalPages = Math.ceil(allTeachers.length / teachersPerPageTable)
 
-    function sortAndUpdateStatisticsTable(currentHeader) {
+        if (direction === 'next' && currentPage < totalPages) {
+            currentPage++
+        } else if (direction === 'prev' && currentPage > 1) {
+            currentPage--
+        }
+
+        sortAndUpdateStatisticsTable(currentHeader, changeSortOrder)
+    }
+
+    function sortAndUpdateStatisticsTable(currentHeader, changeSortOrder=true) {
         // remove all rows from the table
         const oldRows = tableWithStats.querySelectorAll('tr:not(:first-child)')
         oldRows.forEach(row => row.remove())
 
         const col = currentHeader.getAttribute('data-column')
-        const sortOrder = currentHeader.getAttribute('data-order')
+        let sortOrder = ''
+        if(changeSortOrder) {
+            sortOrder = currentHeader.getAttribute('data-order')
+        }
+        else sortOrder = currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc'
+
+        // calculations for pagination
+        const startIndex = (currentPage - 1) * teachersPerPageTable
+        const endIndex = startIndex + teachersPerPageTable
 
         // get sorted array of teachers
         let sortedTeachers = sortUsers(JSON.parse(localStorage.getItem("teachers")), col, sortOrder)
+        const sortedTeachersToDisplay = sortedTeachers.slice(startIndex, endIndex)
 
         const tBody = tableWithStats.querySelector('tbody')
-        sortedTeachers.forEach(teacher => {
+        sortedTeachersToDisplay.forEach(teacher => {
             const row = document.createElement('tr')
 
             const nameCell = document.createElement('td')
@@ -420,6 +437,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tBody.appendChild(row);
     })
+
     }
 
 

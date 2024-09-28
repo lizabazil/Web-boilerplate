@@ -28,7 +28,7 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
         "favorite": false, // generating random True/False
         "course": generateUserCourse(),
         "bg_color": generateUserBgColor(),
-        "note": `Note about ${currentUser.name.first}`,
+        "note": currentUser.note ? currentUser.note : `Note about ${currentUser.name.first}`,
         "gender": currentUser.gender.charAt(0).toUpperCase().concat(currentUser.gender.slice(1)),
         "title": `${currentUser.name.title}`,
         "full_name": `${currentUser.name.first} ${currentUser.name.last}`,
