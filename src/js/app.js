@@ -58,15 +58,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const formAddTeacher = document.getElementById('form-add-teacher')
     formAddTeacher.addEventListener('submit', function (event) {
         event.preventDefault()
-        submitFormAndAddTeacher()
-        clearFormForAddingTeacher()
+        if (submitFormAndAddTeacher())
+            clearFormForAddingTeacher()
     })
 
 
 // -------------------------------------------------------------------------------------------------
     // use localStorage to store all teachers
     // get data from localStorage
-    // TODO: get from LocalStorage
     let currentTeachers =  JSON.parse(localStorage.getItem("teachers")) || []
     if(currentTeachers.length === 0) {
         fetch2().then(res => {
@@ -144,7 +143,8 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
 
-    addOptionsOfCountries()
+    addOptionsOfCountriesInFilter()
+    addCountriesToTheForm()
 
 
     // add listener to button for searching by input
@@ -288,13 +288,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    function addOptionsOfCountries() {
+    function addOptionsOfCountriesInFilter() {
         // add options of countries
         for(let option of allUsersCountries) {
             const newOption = document.createElement('option')
             newOption.value = option
             newOption.textContent = option
             countryFilter.appendChild(newOption)
+        }
+    }
+
+    function addCountriesToTheForm() {
+        // add options of countries to the form of adding new teacher
+        const selectElement = document.getElementById('selectCountry')
+        for(let option of allUsersCountries) {
+            const newOption = document.createElement('option')
+            newOption.value = option
+            newOption.textContent = option
+            selectElement.appendChild(newOption)
         }
     }
 
@@ -459,6 +470,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
+    // returns true if adding new teacher was successful, otherwise false
     function submitFormAndAddTeacher() {
         const name = document.getElementById('newTeacherName').value
         const speciality = document.getElementById('selectSpeciality').value
@@ -494,16 +506,18 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem("teachers", JSON.stringify(teachersForNow))
 
             closePopupFunc()
+            return true
         }
         else
             window.alert('Adding new teacher was unsuccessful.')
 
+        return false
     }
 
     function clearFormForAddingTeacher() {
         document.getElementById('newTeacherName').value = ''
         document.getElementById('selectSpeciality').value = 'Mathematics'
-        document.getElementById('selectCountry').value = 'Germany'
+        document.getElementById('selectCountry').value = ''
         document.getElementById('newTeacherCity').value = ''
         document.getElementById('newTeacherEmail').value = ''
         document.getElementById('newTeacherPhone').value = ''
