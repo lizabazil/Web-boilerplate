@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     moveButtonRight.addEventListener('click', function () {
-        if (startIndex + maxVisibleTeachers < teachers.length) {
+        if (startIndex + maxVisibleTeachers < JSON.parse(localStorage.getItem('teachers')).length) {
             startIndex += maxVisibleTeachers
             updateVisibleItemsOfFavoritesTeachers()
         }
@@ -240,34 +240,36 @@ document.addEventListener('DOMContentLoaded', function () {
         phone.textContent = teacher.phone
 
         const star = document.querySelector('#detailedPopup .star')
+
+        const newStar = star.cloneNode(true)
+        star.replaceWith(newStar)
+
         if(teacher.favorite) {
-            star.innerText = '★'
+            newStar.innerText = '★'
         }
         else {
-            star.innerText = '☆'
+            newStar.innerText = '☆'
         }
 
-        star.addEventListener('click', function () {
+        newStar.addEventListener('click', function () {
             // change the attribute 'favorite' of teacher
             let teachers = JSON.parse(localStorage.getItem("teachers"))
             const teacherIndex = teachers.findIndex(findTeacher =>
             findTeacher.id === teacher.id)
 
             teachers[teacherIndex].favorite = !teachers[teacherIndex].favorite
-            localStorage.clear()
             addTeachersToLocalStorage(teachers)
 
             teacher.favorite = !teacher.favorite
 
             // change the state of star depending on the new status of teacher (favorite or not)
-            if(teacher.favorite) star.innerText = '★'
-            else star.innerText = '☆'
+            if(teacher.favorite) newStar.innerText = '★'
+            else newStar.innerText = '☆'
 
             // to refresh all teachers cards
-            //removeAllTeachersCardsFromGrid()
-            //addTeacherCardsOnPage(teachers)
-            //updateVisibleItemsOfFavoritesTeachers()
-            location.reload()
+            removeAllTeachersCardsFromGrid()
+            addTeacherCardsOnPage(teachers)
+            updateVisibleItemsOfFavoritesTeachers()
         })
 
 
@@ -525,7 +527,6 @@ document.addEventListener('DOMContentLoaded', function () {
             body: JSON.stringify(newTeacher)
 
         })
-            //.then(response => response.json())
             .catch(error => console.log(`Error: ${error}`))
     }
 
