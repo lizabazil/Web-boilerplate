@@ -506,6 +506,7 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem("teachers", JSON.stringify(teachersForNow))
 
             closePopupFunc()
+            addNewTeacherToServer(newTeacher)
             return true
         }
         else
@@ -513,6 +514,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return false
     }
+
+    function addNewTeacherToServer(newTeacher) {
+        const url = 'http://localhost:3000/teachers'
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newTeacher)
+
+        })
+            //.then(response => response.json())
+            .catch(error => console.log(`Error: ${error}`))
+    }
+
 
     function clearFormForAddingTeacher() {
         document.getElementById('newTeacherName').value = ''
