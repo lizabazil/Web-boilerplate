@@ -239,7 +239,7 @@ hr {
     gap: 40px;
 }
 
-.numbers-of-pages {
+.numbers-of-pages, #prev-grid, #next-grid {
     color: rgba(158, 191, 250, 0.99);
     text-decoration: none;
     background: white;
