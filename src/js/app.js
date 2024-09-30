@@ -176,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
+    // for pagination for table with statistics
     const teachersPerPageTable = 10
     let currentPage = 1
 
@@ -185,20 +186,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const headers = tableWithStats.querySelectorAll('th')
     headers.forEach(currentHeader =>
     currentHeader.addEventListener('click', function () {
-        changePageTable('prev' ,currentHeader)
-        //currentPage = 0
+        createPaginationForTable(currentHeader)
+
+        currentPage = 1
+        sortAndUpdateStatisticsTable(currentHeader, false)
+
         mainCurrentHeader = currentHeader
         updateSortByIndicator(currentHeader, currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc')
 
     }))
 
 
-    document.getElementById('previous-a').addEventListener('click', () => changePageTable('prev', mainCurrentHeader, false));
-    document.getElementById('next-a').addEventListener('click', () => changePageTable('next', mainCurrentHeader, false));
-
-
     // when the page is loading, the table will be sorted by age of teachers
-    changePageTable('prev',tableWithStats.querySelectorAll('th')[2])
+    createPaginationForTable(tableWithStats.querySelectorAll('th')[2])
+    sortAndUpdateStatisticsTable(tableWithStats.querySelectorAll('th')[2])
 
     function openPopup() {
         popupOverlay.style.display = 'inline-block'
@@ -394,17 +395,30 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function changePageTable(direction, currentHeader, changeSortOrder=true) {
-        const allTeachers = JSON.parse(localStorage.getItem('teachers')) || []
-        const totalPages = Math.ceil(allTeachers.length / teachersPerPageTable)
+    function createPaginationForTable(currentHeader, changeSortOrder=true) {
+        const paginationContainer = document.querySelector('.pages')
+        paginationContainer.innerHTML = ''
 
-        if (direction === 'next' && currentPage < totalPages) {
-            currentPage++
-        } else if (direction === 'prev' && currentPage > 1) {
-            currentPage--
+        const teachers = JSON.parse(localStorage.getItem('teachers'))
+        const totalPages = Math.ceil(teachers.length / 10)
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button')
+            pageButton.textContent = i
+            pageButton.classList.add('numbers-of-pages')
+
+
+            pageButton.addEventListener('click', function () {
+                const allPageButtons = paginationContainer.querySelectorAll('.numbers-of-pages')
+                allPageButtons.forEach(button => button.classList.remove('current-number-page'))
+
+                pageButton.classList.add('current-number-page')
+                currentPage = i
+                sortAndUpdateStatisticsTable(currentHeader)
+            })
+
+            paginationContainer.appendChild(pageButton)
         }
-
-        sortAndUpdateStatisticsTable(currentHeader, changeSortOrder)
     }
 
     function sortAndUpdateStatisticsTable(currentHeader, changeSortOrder=true) {

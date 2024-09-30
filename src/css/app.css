@@ -242,6 +242,14 @@ hr {
 .numbers-of-pages {
     color: rgba(158, 191, 250, 0.99);
     text-decoration: none;
+    background: white;
+    border: none;
+    margin: 10px;
+    font-size: 20px;
+}
+
+.current-number-page {
+    color: black;
 }
 
 .numbers-of-pages:hover {
