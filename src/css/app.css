@@ -452,7 +452,7 @@ th:hover {
     padding: 10px;
 }
 
-.pages {
+.pages, .prev-next-grid {
     display: flex;
     margin-bottom: 60px;
 }

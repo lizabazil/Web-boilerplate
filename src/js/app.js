@@ -2,7 +2,6 @@
 require('../css/app.css');*/
 
 import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge} from "./lab2.js";
-import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
 import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 const allUsersCountries = new Set()
@@ -152,13 +151,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchValue = document.getElementById('searchInput').value
         document.getElementById('searchInput').value = ''
 
-        const resultOfSearching = searchByNameNoteOrAge(searchValue, JSON.parse(localStorage.getItem("teachers")))
-        removeAllTeachersCardsFromGrid()
-
-        resultOfSearching.forEach(teacher => {
-            const teacherCard = createTeacherCard(teacher)
-            container.appendChild(teacherCard)
-        })
+        currentArrayOfTeachers = searchByNameNoteOrAge(searchValue, JSON.parse(localStorage.getItem("teachers")))
+        currentGridPage = 0
+        goToNextPageGrid()
     })
 
 
@@ -180,6 +175,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const teachersPerPageTable = 10
     let currentPage = 1
 
+    // for navigating grid with teachers' cards
+    let currentGridPage = 0
+    const teachersPerGridPage = 25
+
+    // variable for storing current array with teachers
+    let currentArrayOfTeachers = JSON.parse(localStorage.getItem('teachers'))
+
+    // when the page is loading, will be shown the first page with teacher cards
+    goToNextPageGrid()
+
     // get table with statistics
     let mainCurrentHeader
     const tableWithStats = document.getElementById('teacherTable')
@@ -195,6 +200,17 @@ document.addEventListener('DOMContentLoaded', function () {
         updateSortByIndicator(currentHeader, currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc')
 
     }))
+
+
+    const buttonPrevGrid = document.getElementById('prev-grid')
+    const buttonNextGrid = document.getElementById('next-grid')
+    buttonPrevGrid.addEventListener('click', function () {
+       goToPrevPageGrid()
+    })
+
+    buttonNextGrid.addEventListener('click', function () {
+        goToNextPageGrid()
+    })
 
 
     // when the page is loading, the table will be sorted by age of teachers
@@ -267,9 +283,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if(teacher.favorite) newStar.innerText = '★'
             else newStar.innerText = '☆'
 
-            // to refresh all teachers cards
-            removeAllTeachersCardsFromGrid()
-            addTeacherCardsOnPage(teachers)
+            currentArrayOfTeachers = teachers
+            // to refresh teachers cards on page
+            currentGridPage--
+            goToNextPageGrid()
+
             updateVisibleItemsOfFavoritesTeachers()
         })
 
@@ -385,14 +403,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if(!isPhoto)
             isPhoto = undefined
 
-        let filteredTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
-        removeAllTeachersCardsFromGrid()
-
-        // show user filtered teachers on the page
-        filteredTeachers.forEach(teacher => {
-            const teacherCard = createTeacherCard(teacher);
-            container.appendChild(teacherCard)
-        });
+        currentArrayOfTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
+        currentGridPage = 0
+        goToNextPageGrid()
     }
 
     function createPaginationForTable(currentHeader, changeSortOrder=true) {
@@ -601,6 +614,41 @@ document.addEventListener('DOMContentLoaded', function () {
         // hide buttons in some cases
         moveButtonLeft.style.visibility = startIndex === 0 ? 'hidden' : 'visible'
         moveButtonRight.style.visibility = startIndex + maxVisibleTeachers >= favoriteTeachers.length ? 'hidden' : 'visible'
+    }
+
+    function goToNextPageGrid() {
+        const totalTeaches = currentArrayOfTeachers
+        const totalPages = Math.ceil(totalTeaches.length / teachersPerGridPage)
+        if(currentGridPage < totalPages) {
+            currentGridPage++
+
+            removeAllTeachersCardsFromGrid()
+
+            const startIndex = (currentGridPage - 1) * teachersPerGridPage
+            const endIndex = startIndex + teachersPerGridPage
+            const teachersToDisplay = totalTeaches.slice(startIndex, endIndex)
+            addTeacherCardsOnPage(teachersToDisplay, true)
+
+            // scroll to the start of cards
+            document.getElementById('teachers-grid').scrollIntoView()
+        }
+    }
+
+    function goToPrevPageGrid() {
+        if(currentGridPage > 1) {
+            currentGridPage--
+
+            removeAllTeachersCardsFromGrid()
+            const allTeachers = currentArrayOfTeachers
+            const startIndex = (currentGridPage - 1) * teachersPerGridPage
+            const endIndex = startIndex + teachersPerGridPage
+            const teachersToDisplay = allTeachers.slice(startIndex, endIndex)
+            addTeacherCardsOnPage(teachersToDisplay, true)
+
+            // scroll to the start of cards
+            document.getElementById('teachers-grid').scrollIntoView()
+
+        }
     }
 
 
