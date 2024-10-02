@@ -62,12 +62,11 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
 
-// -------------------------------------------------------------------------------------------------
     // use localStorage to store all teachers
     // get data from localStorage
     let currentTeachers =  JSON.parse(localStorage.getItem("teachers")) || []
     if(currentTeachers.length === 0) {
-        fetch2().then(res => {
+        fetchRandomTeachers().then(res => {
             removeAllTeachersCardsFromGrid()
             addTeachersToLocalStorage(res, false)
             addTeacherCardsOnPage(res, false)
@@ -82,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    function fetch2() {
+    function fetchRandomTeachers() {
         let arr = []
         const url = 'https://randomuser.me/api/?results=50'
         return fetch(url)
@@ -114,8 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('teachers', JSON.stringify(getFormattedUsers(teachers, [])))
         else localStorage.setItem('teachers', JSON.stringify(teachers))
     }
-
-// -------------------------------------------------------------------------------------------------
 
 
 
@@ -151,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchValue = document.getElementById('searchInput').value
         document.getElementById('searchInput').value = ''
 
-        currentArrayOfTeachers = searchByNameNoteOrAge(searchValue, JSON.parse(localStorage.getItem("teachers")))
+        currentTeachers = searchByNameNoteOrAge(searchValue, JSON.parse(localStorage.getItem("teachers")))
         currentGridPage = 0
         goToNextPageGrid()
     })
@@ -178,9 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // for navigating grid with teachers' cards
     let currentGridPage = 0
     const teachersPerGridPage = 25
-
-    // variable for storing current array with teachers
-    let currentArrayOfTeachers = JSON.parse(localStorage.getItem('teachers'))
 
     // when the page is loading, will be shown the first page with teacher cards
     goToNextPageGrid()
@@ -283,7 +277,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if(teacher.favorite) newStar.innerText = '★'
             else newStar.innerText = '☆'
 
-            currentArrayOfTeachers = teachers
+            //currentArrayOfTeachers = teachers
+            currentTeachers = teachers
             // to refresh teachers cards on page
             currentGridPage--
             goToNextPageGrid()
@@ -403,7 +398,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if(!isPhoto)
             isPhoto = undefined
 
-        currentArrayOfTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
+        //currentArrayOfTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
+        currentTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
         currentGridPage = 0
         goToNextPageGrid()
     }
@@ -617,8 +613,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function goToNextPageGrid() {
-        const totalTeaches = currentArrayOfTeachers
+        //const totalTeaches = currentArrayOfTeachers
+        const totalTeaches = currentTeachers
         const totalPages = Math.ceil(totalTeaches.length / teachersPerGridPage)
+        if(totalTeaches.length === 0)
+            removeAllTeachersCardsFromGrid()
+
         if(currentGridPage < totalPages) {
             currentGridPage++
 
@@ -639,7 +639,7 @@ document.addEventListener('DOMContentLoaded', function () {
             currentGridPage--
 
             removeAllTeachersCardsFromGrid()
-            const allTeachers = currentArrayOfTeachers
+            const allTeachers = currentTeachers
             const startIndex = (currentGridPage - 1) * teachersPerGridPage
             const endIndex = startIndex + teachersPerGridPage
             const teachersToDisplay = allTeachers.slice(startIndex, endIndex)
