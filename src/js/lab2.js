@@ -1,6 +1,5 @@
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
 import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
-// TODO: change import for working with page
 //import {v4 as uuidv4 } from 'uuid'
 
 // list of all courses

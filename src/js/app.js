@@ -1,8 +1,8 @@
- /*const testModules = require('./test-module');
+/*const testModules = require('./test-module');
 require('../css/app.css');*/
 
 import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge} from "./lab2.js";
-import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
+import {v4 as uuidv4} from 'https://jspm.dev/uuid';
 
 const allUsersCountries = new Set()
 
@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
 
-
     const container = document.getElementsByClassName('teachers-grid')[0]
 
     // submit form for adding a teacher
@@ -64,12 +63,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // use localStorage to store all teachers
     // get data from localStorage
-    let currentTeachers =  JSON.parse(localStorage.getItem("teachers")) || []
-    if(currentTeachers.length === 0) {
-        fetchRandomTeachers().then(res => {
+    let currentTeachers = JSON.parse(localStorage.getItem("teachers")) || []
+    if (currentTeachers.length === 0) {
+        fetchRandomTeachers(50).then(res => {
             removeAllTeachersCardsFromGrid()
             addTeachersToLocalStorage(res, false)
             addTeacherCardsOnPage(res, false)
+            location.reload()
         })
     } else {
         currentTeachers.forEach(teacher => {
@@ -80,10 +80,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-
-    function fetchRandomTeachers() {
+    function fetchRandomTeachers(amountOfUsers) {
         let arr = []
-        const url = 'https://randomuser.me/api/?results=50'
+        const url = 'https://randomuser.me/api/?results=' + amountOfUsers
         return fetch(url)
             .then(response => response.json())
             .then(teachers => {
@@ -95,10 +94,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // add teachers to page and format them if needed
-    function addTeacherCardsOnPage(teachersArr, isFormatted=true) {
-        if(!isFormatted)
+    function addTeacherCardsOnPage(teachersArr, isFormatted = true) {
+        if (!isFormatted)
             teachersArr = getFormattedUsers(teachersArr, [])
-        // TODO: validate??
         teachersArr.forEach(teacher => {
             const currentCard = createTeacherCard(teacher)
             container.appendChild(currentCard)
@@ -108,17 +106,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // add to localStorage and format them before adding (if needed)
-    function addTeachersToLocalStorage(teachers, formatted=true) {
-        if(!formatted)
+    function addTeachersToLocalStorage(teachers, formatted = true) {
+        if (!formatted)
             localStorage.setItem('teachers', JSON.stringify(getFormattedUsers(teachers, [])))
         else localStorage.setItem('teachers', JSON.stringify(teachers))
     }
 
 
-
     container.addEventListener('click', function (event) {
         const card = event.target.closest('.teacher-card')
-        if(card) {
+        if (card) {
             const teacherData = {
                 id: card.teacherId,
                 full_name: card.teacherFullName,
@@ -149,8 +146,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('searchInput').value = ''
 
         currentTeachers = searchByNameNoteOrAge(searchValue, JSON.parse(localStorage.getItem("teachers")))
-        currentGridPage = 0
-        goToNextPageGrid()
+        removeAllTeachersCardsFromGrid()
+        addTeacherCardsOnPage(currentTeachers)
+
+        createPaginationForTable(mainCurrentHeader)
+        sortAndUpdateStatisticsTable(mainCurrentHeader)
     })
 
 
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     closeDetailedPopup.addEventListener('click', closeDetailedPopupFunc)
     detailedPopupOverlay.addEventListener('click', function (event) {
-        if(event.target === detailedPopupOverlay) {
+        if (event.target === detailedPopupOverlay) {
             closeDetailedPopupFunc()
         }
     })
@@ -172,35 +172,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const teachersPerPageTable = 10
     let currentPage = 1
 
-    // for navigating grid with teachers' cards
-    let currentGridPage = 0
-    const teachersPerGridPage = 25
-
-    // when the page is loading, will be shown the first page with teacher cards
-    goToNextPageGrid()
-
     // get table with statistics
     let mainCurrentHeader
     const tableWithStats = document.getElementById('teacherTable')
     const headers = tableWithStats.querySelectorAll('th')
     headers.forEach(currentHeader =>
-    currentHeader.addEventListener('click', function () {
-        createPaginationForTable(currentHeader)
+        currentHeader.addEventListener('click', function () {
+            createPaginationForTable(currentHeader)
 
-        currentPage = 1
-        sortAndUpdateStatisticsTable(currentHeader, false)
+            currentPage = 1
+            sortAndUpdateStatisticsTable(currentHeader, false)
 
-        mainCurrentHeader = currentHeader
-        updateSortByIndicator(currentHeader, currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc')
+            mainCurrentHeader = currentHeader
+            updateSortByIndicator(currentHeader, currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc')
 
-    }))
+        }))
 
 
-    const buttonPrevGrid = document.getElementById('prev-grid')
     const buttonNextGrid = document.getElementById('next-grid')
-    buttonPrevGrid.addEventListener('click', function () {
-       goToPrevPageGrid()
-    })
+
 
     buttonNextGrid.addEventListener('click', function () {
         goToNextPageGrid()
@@ -227,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // set info about teacher in the popup
         const image = document.querySelector('.detailed-image')
-        if(!teacher.picture_large) image.src = "/src/images/default_avatar.jpg"
+        if (!teacher.picture_large) image.src = "/src/images/default_avatar.jpg"
         else image.src = teacher.picture_large
         image.alt = teacher.full_name
 
@@ -255,10 +245,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const newStar = star.cloneNode(true)
         star.replaceWith(newStar)
 
-        if(teacher.favorite) {
+        if (teacher.favorite) {
             newStar.innerText = '★'
-        }
-        else {
+        } else {
             newStar.innerText = '☆'
         }
 
@@ -266,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // change the attribute 'favorite' of teacher
             let teachers = JSON.parse(localStorage.getItem("teachers"))
             const teacherIndex = teachers.findIndex(findTeacher =>
-            findTeacher.id === teacher.id)
+                findTeacher.id === teacher.id)
 
             teachers[teacherIndex].favorite = !teachers[teacherIndex].favorite
             addTeachersToLocalStorage(teachers)
@@ -274,15 +263,13 @@ document.addEventListener('DOMContentLoaded', function () {
             teacher.favorite = !teacher.favorite
 
             // change the state of star depending on the new status of teacher (favorite or not)
-            if(teacher.favorite) newStar.innerText = '★'
+            if (teacher.favorite) newStar.innerText = '★'
             else newStar.innerText = '☆'
 
-            //currentArrayOfTeachers = teachers
             currentTeachers = teachers
             // to refresh teachers cards on page
-            currentGridPage--
-            goToNextPageGrid()
-
+            removeAllTeachersCardsFromGrid()
+            addTeacherCardsOnPage(currentTeachers)
             updateVisibleItemsOfFavoritesTeachers()
         })
 
@@ -301,12 +288,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-
-
-
     function addOptionsOfCountriesInFilter() {
         // add options of countries
-        for(let option of allUsersCountries) {
+        for (let option of allUsersCountries) {
             const newOption = document.createElement('option')
             newOption.value = option
             newOption.textContent = option
@@ -317,7 +301,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function addCountriesToTheForm() {
         // add options of countries to the form of adding new teacher
         const selectElement = document.getElementById('selectCountry')
-        for(let option of allUsersCountries) {
+        selectElement.innerText = ''
+        for (let option of allUsersCountries) {
             const newOption = document.createElement('option')
             newOption.value = option
             newOption.textContent = option
@@ -332,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
         imageContainer.classList.add('image-container')
 
         const img = document.createElement('img')
-        if(!teacher.picture_large) img.src = "/src/images/default_avatar.jpg"
+        if (!teacher.picture_large) img.src = "/src/images/default_avatar.jpg"
         else
             img.src = teacher.picture_large
         img.alt = teacher.full_name
@@ -343,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const star = document.createElement('div')
         star.classList.add('star')
 
-        if(teacher.favorite)
+        if (teacher.favorite)
             star.innerText = '★'
         else star.innerText = ''
 
@@ -392,24 +377,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function filterTeachersOnPage(chosenAge, chosenCountry, isPhoto, chosenGender, chosenFavorite) {
-        if(!chosenFavorite)
+        if (!chosenFavorite)
             chosenFavorite = undefined
 
-        if(!isPhoto)
+        if (!isPhoto)
             isPhoto = undefined
 
-        //currentArrayOfTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
         currentTeachers = filterUsers(JSON.parse(localStorage.getItem("teachers")), chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite)
-        currentGridPage = 0
-        goToNextPageGrid()
+        removeAllTeachersCardsFromGrid()
+        addTeacherCardsOnPage(currentTeachers)
+
+        createPaginationForTable(mainCurrentHeader)
+        sortAndUpdateStatisticsTable(mainCurrentHeader)
     }
 
-    function createPaginationForTable(currentHeader, changeSortOrder=true) {
+    function createPaginationForTable(currentHeader, changeSortOrder = true) {
         const paginationContainer = document.querySelector('.pages')
         paginationContainer.innerHTML = ''
 
-        const teachers = JSON.parse(localStorage.getItem('teachers'))
-        const totalPages = Math.ceil(teachers.length / 10)
+        const totalPages = Math.ceil(currentTeachers.length / 10)
 
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = document.createElement('button')
@@ -430,24 +416,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function sortAndUpdateStatisticsTable(currentHeader, changeSortOrder=true) {
+    function sortAndUpdateStatisticsTable(currentHeader, changeSortOrder = true) {
         // remove all rows from the table
         const oldRows = tableWithStats.querySelectorAll('tr:not(:first-child)')
         oldRows.forEach(row => row.remove())
 
         const col = currentHeader.getAttribute('data-column')
         let sortOrder = ''
-        if(changeSortOrder) {
+        if (changeSortOrder) {
             sortOrder = currentHeader.getAttribute('data-order')
-        }
-        else sortOrder = currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc'
+        } else sortOrder = currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc'
 
         // calculations for pagination
         const startIndex = (currentPage - 1) * teachersPerPageTable
         const endIndex = startIndex + teachersPerPageTable
 
         // get sorted array of teachers
-        let sortedTeachers = sortUsers(JSON.parse(localStorage.getItem("teachers")), col, sortOrder)
+        let sortedTeachers = sortUsers(currentTeachers, col, sortOrder)
         const sortedTeachersToDisplay = sortedTeachers.slice(startIndex, endIndex)
 
         const tBody = tableWithStats.querySelector('tbody')
@@ -472,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function () {
             row.appendChild(countryCell)
 
             tBody.appendChild(row);
-    })
+        })
 
     }
 
@@ -525,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function () {
             note: notes
         }
 
-        if(validateUser(newTeacher)) {
+        if (validateUser(newTeacher)) {
             let teachersForNow = JSON.parse(localStorage.getItem("teachers"))
             teachersForNow.push(newTeacher)
             localStorage.setItem("teachers", JSON.stringify(teachersForNow))
@@ -533,8 +518,7 @@ document.addEventListener('DOMContentLoaded', function () {
             closePopupFunc()
             addNewTeacherToServer(newTeacher)
             return true
-        }
-        else
+        } else
             window.alert('Adding new teacher was unsuccessful.')
 
         return false
@@ -590,7 +574,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // remove previous set of favorite teachers
         const teachersCardsToRemove = containerWithFavorites.querySelectorAll('.teacher-card')
-        teachersCardsToRemove.forEach(elem => {elem.remove()})
+        teachersCardsToRemove.forEach(elem => {
+            elem.remove()
+        })
 
         const teachers = JSON.parse(localStorage.getItem('teachers'))
         const favoriteTeachers = teachers.filter(teacher => teacher.favorite === true)
@@ -613,51 +599,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function goToNextPageGrid() {
-        //const totalTeaches = currentArrayOfTeachers
-        const totalTeaches = currentTeachers
-        const totalPages = Math.ceil(totalTeaches.length / teachersPerGridPage)
-        if(totalTeaches.length === 0)
-            removeAllTeachersCardsFromGrid()
+        removeAllTeachersCardsFromGrid()
 
-        if(currentGridPage < totalPages) {
-            currentGridPage++
+        fetchRandomTeachers(10).then(res => {
+                res = getFormattedUsers(res, [])
+                addTeachersToLocalStorage(JSON.parse(localStorage.getItem('teachers')).concat(res), true)
+                currentTeachers = JSON.parse(localStorage.getItem('teachers'))
+                addTeacherCardsOnPage(currentTeachers, true)
 
-            removeAllTeachersCardsFromGrid()
-
-            const startIndex = (currentGridPage - 1) * teachersPerGridPage
-            const endIndex = startIndex + teachersPerGridPage
-            const teachersToDisplay = totalTeaches.slice(startIndex, endIndex)
-            addTeacherCardsOnPage(teachersToDisplay, true)
-
-            // scroll to the start of cards
-            document.getElementById('teachers-grid').scrollIntoView()
-        }
+            createPaginationForTable(mainCurrentHeader)
+            sortAndUpdateStatisticsTable(mainCurrentHeader)
+            res.forEach(current => allUsersCountries.add(current.country))
+            addCountriesToTheForm()
+            }
+        )
     }
-
-    function goToPrevPageGrid() {
-        if(currentGridPage > 1) {
-            currentGridPage--
-
-            removeAllTeachersCardsFromGrid()
-            const allTeachers = currentTeachers
-            const startIndex = (currentGridPage - 1) * teachersPerGridPage
-            const endIndex = startIndex + teachersPerGridPage
-            const teachersToDisplay = allTeachers.slice(startIndex, endIndex)
-            addTeacherCardsOnPage(teachersToDisplay, true)
-
-            // scroll to the start of cards
-            document.getElementById('teachers-grid').scrollIntoView()
-
-        }
-    }
-
-
 
     updateVisibleItemsOfFavoritesTeachers()
 
+
 });
-
-
 
 
 //console.log(testModules.hello);
