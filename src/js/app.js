@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     buttonNextGrid.addEventListener('click', function () {
-        goToNextPageGrid()
+        fetchAdditional10Users()
     })
 
 
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', function () {
         moveButtonRight.style.visibility = startIndex + maxVisibleTeachers >= favoriteTeachers.length ? 'hidden' : 'visible'
     }
 
-    function goToNextPageGrid() {
+    function fetchAdditional10Users() {
         removeAllTeachersCardsFromGrid()
 
         fetchRandomTeachers(10).then(res => {
