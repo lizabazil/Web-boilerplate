@@ -1,6 +1,5 @@
 import {additionalUsers, randomUserMock} from "./FE4U-Lab2-mock.js";
 import {v4 as uuidv4 } from 'https://jspm.dev/uuid';
-// TODO: change import for working with page
 //import {v4 as uuidv4 } from 'uuid'
 
 // list of all courses
@@ -28,7 +27,7 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
         "favorite": false, // generating random True/False
         "course": generateUserCourse(),
         "bg_color": generateUserBgColor(),
-        "note": `Note about ${currentUser.name.first}`,
+        "note": currentUser.note ? currentUser.note : `Note about ${currentUser.name.first}`,
         "gender": currentUser.gender.charAt(0).toUpperCase().concat(currentUser.gender.slice(1)),
         "title": `${currentUser.name.title}`,
         "full_name": `${currentUser.name.first} ${currentUser.name.last}`,
@@ -111,7 +110,6 @@ function checkAgeInRange(chosenAge, userAge) {
 
 // task 4
 export function sortUsers(arrayOfUsers, sortBy, order='asc') {
-    console.log(`sort by = ${sortBy}, order = ${order}`)
     if(sortBy === 'full_name') {
         if(order === 'asc')
             return arrayOfUsers.sort((a, b) => a.full_name.localeCompare(b.full_name))

@@ -239,9 +239,17 @@ hr {
     gap: 40px;
 }
 
-.numbers-of-pages {
+.numbers-of-pages, #prev-grid, #next-grid {
     color: rgba(158, 191, 250, 0.99);
     text-decoration: none;
+    background: white;
+    border: none;
+    margin: 10px;
+    font-size: 20px;
+}
+
+.current-number-page {
+    color: black;
 }
 
 .numbers-of-pages:hover {
@@ -444,7 +452,7 @@ th:hover {
     padding: 10px;
 }
 
-.pages {
+.pages, .prev-next-grid {
     display: flex;
     margin-bottom: 60px;
 }
