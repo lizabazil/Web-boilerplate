@@ -40,6 +40,9 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "chart.js": "^4.4.4",
+    "dayjs": "^1.11.13",
+    "leaflet": "^1.9.4",
     "uuid": "^10.0.0"
   },
   "type": "module"

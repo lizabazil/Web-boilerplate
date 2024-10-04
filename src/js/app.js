@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const moveButtonRight = document.getElementById('move-button-right')
     const moveButtonLeft = document.getElementById('move-button-left')
 
+
     allFilters.forEach(current => {
         current.addEventListener('change', function () {
             filterTeachersOnPage(ageFilter.value, countryFilter.value, photoFilter.checked, genderFilter.value, favoriteFilter.checked)
@@ -128,7 +129,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 phone: card.teacherPhone,
                 favorite: card.teacherFavorite,
                 picture_large: card.photo,
-                note: card.note
+                note: card.note,
+                coordinates: card.coordinates,
+                b_date: card.b_date
 
             }
             openDetailedTeacherPopup(teacherData)
@@ -211,6 +214,9 @@ document.addEventListener('DOMContentLoaded', function () {
         content.classList.remove('blurred')
     }
 
+
+    let map
+
     function openDetailedTeacherPopup(teacher) {
         detailedPopupOverlay.style.display = 'inline-block'
         content.classList.add('blurred')
@@ -277,13 +283,68 @@ document.addEventListener('DOMContentLoaded', function () {
         const teacherNote = document.querySelector('.detailed-part-2')
         teacherNote.textContent = teacher.note
 
-        const address = `${teacher.country}, ${teacher.city}`
-        const googleMapsLink = document.querySelector('.toggle-map')
-        googleMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+        const dayToBD = document.querySelector('#days-to-bd')
+        const b_date = dayjs(teacher.b_date)
+        const today = dayjs()
+        const currentYear = today.year();
+
+        let nextBirthday = b_date.year(currentYear);
+
+        if (nextBirthday.isBefore(today))
+            nextBirthday = nextBirthday.add(1, 'year');
+
+        const daysLeft = nextBirthday.diff(today, 'day');
+        dayToBD.textContent = `Days left to next birthday: ${daysLeft}`;
+
+        // TODO: fix
+        const buttonShowOnMap = document.getElementById('toggle-map')
+        const newButtonShowOnMap = buttonShowOnMap.cloneNode(true)
+        buttonShowOnMap.replaceWith(newButtonShowOnMap)
+
+        newButtonShowOnMap.addEventListener('click', async function () {
+            document.getElementById('map').style.display = 'block'
+            const coordinates = await getCoordinatesByCity(teacher.city, teacher.country);
+
+            if (map !== undefined) {
+                map.remove()
+            }
+
+            if (coordinates) {
+                const latitude = coordinates.latitude;
+                const longitude = coordinates.longitude;
+
+                map = L.map('map').setView([latitude, longitude], 9);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                L.marker([latitude, longitude]).addTo(map)
+                    .bindPopup(`${teacher.city}, ${teacher.country}`)
+                    .openPopup();
+            }
+        })
+
     }
+
+    async function getCoordinatesByCity(city, country) {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&format=json`);
+        const data = await response.json();
+
+        if (data.length > 0) {
+            return {
+                latitude: data[0].lat,
+                longitude: data[0].lon
+            };
+        } else {
+            return null;
+        }
+    }
+
 
     function closeDetailedPopupFunc() {
         detailedPopupOverlay.style.display = 'none'
+        document.getElementById('map').style.display = 'none'
         content.classList.remove('blurred')
     }
 
@@ -372,6 +433,8 @@ document.addEventListener('DOMContentLoaded', function () {
         card.teacherFavorite = teacher.favorite
         card.photo = teacher.picture_large
         card.note = teacher.note
+        card.coordinates = teacher.coordinates
+        card.b_date = teacher.b_date
 
         return card
     }
