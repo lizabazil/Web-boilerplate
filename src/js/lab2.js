@@ -22,13 +22,13 @@ export function generateColor() {
 // task 1
 // to format array randomUserMock and add two arrays, then delete duplicates if they are
 export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
-    let formattedUserMock = arrayOfRandomUsers.map(currentUser => ({
+    let formattedUserMock = _.map(arrayOfRandomUsers, currentUser => ({
         "id": uuidv4(),
         "favorite": false, // generating random True/False
         "course": generateUserCourse(),
         "bg_color": generateColor(),
         "note": currentUser.note ? currentUser.note : `Note about ${currentUser.name.first}`,
-        "gender": currentUser.gender.charAt(0).toUpperCase().concat(currentUser.gender.slice(1)),
+        "gender": (currentUser.gender.charAt(0).toUpperCase().concat(currentUser.gender.slice(1))),
         "title": `${currentUser.name.title}`,
         "full_name": `${currentUser.name.first} ${currentUser.name.last}`,
         "city": currentUser.location.city,
@@ -45,12 +45,12 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
         "picture_thumbnail": currentUser.picture.thumbnail
     }))
 
-    moreUsers.forEach(user => {
+    _.forEach(moreUsers, user => {
         user.gender = user.gender.charAt(0).toUpperCase().concat(user.gender.slice(1))
     })
 
     // join two arrays (formatted array from randomUserMock and additionalUsers)
-    let joinedArrays = formattedUserMock.concat(moreUsers)
+    let joinedArrays = _.concat(formattedUserMock, moreUsers)
 
     joinedArrays = joinedArrays.filter((obj, index, self) =>
         index === self.findIndex((t) =>
@@ -91,7 +91,7 @@ function isValidPhoneNumber(phoneNumber) {
 // task 3
 //filter the array of users by specified values
 export function filterUsers(arrayOfUsers, chosenCountry, chosenAge, chosenGender, isPhoto, chosenFavorite) {
-    return arrayOfUsers.filter(user => {
+    return _.filter(arrayOfUsers, user => {
         return (
             (chosenCountry === undefined || chosenCountry === 'all' || chosenCountry === user.country)
             && (chosenAge === undefined || chosenAge === 'all' || checkAgeInRange(chosenAge, user.age))
@@ -112,26 +112,26 @@ function checkAgeInRange(chosenAge, userAge) {
 export function sortUsers(arrayOfUsers, sortBy, order='asc') {
     if(sortBy === 'full_name') {
         if(order === 'asc')
-            return arrayOfUsers.sort((a, b) => a.full_name.localeCompare(b.full_name))
-        else return arrayOfUsers.sort((a, b) => b.full_name.localeCompare(a.full_name))
+            return _.sortBy(arrayOfUsers, 'full_name')
+        else return _.orderBy(arrayOfUsers, ['full_name'], ['desc'])
     }
 
     else if (sortBy === 'age') {
         if(order === 'asc')
-            return arrayOfUsers.sort((a, b) => a.age - b.age)
-        else return arrayOfUsers.sort((a, b) => b.age - a.age)
+            return _.sortBy(arrayOfUsers, 'age')
+        else return _.orderBy(arrayOfUsers, ['age'], ['desc'])
     }
 
     else if (sortBy === 'b_date') {
         if (order === 'asc')
-            return arrayOfUsers.sort((a, b) => new Date(a.b_date) - new Date(b.b_date))
-        else return arrayOfUsers.sort((a, b) => new Date(b.b_date) - new Date(a.b_date))
+            return _.sortBy(arrayOfUsers, 'b_date')
+        else return _.orderBy(arrayOfUsers, ['b_date'], ['desc'])
     }
 
     else if (sortBy === 'country') {
         if(order === 'asc')
-            return arrayOfUsers.sort((a, b) => a.country.localeCompare(b.country))
-        else return arrayOfUsers.sort((a, b) => b.country.localeCompare(a.country))
+            return _.sortBy(arrayOfUsers, 'country')
+        else return _.orderBy(arrayOfUsers, ['country'], ['desc'])
     }
 
     else if(sortBy === 'course') {
@@ -161,11 +161,11 @@ export function searchByNameNoteOrAge(searchValue, arrayOfUsers) {
 
         if(!isNaN(number)) {
             if (firstChar === '>')
-               return arrayOfUsers.filter(user => user.age > number)
+               return _.filter(arrayOfUsers, user => user.age > number)
             else if (firstChar === '<')
-                return arrayOfUsers.filter(user => user.age < number)
+                return _.filter(arrayOfUsers, user => user.age < number)
             else
-                return arrayOfUsers.filter(user => user.age == number)
+                return _.filter(arrayOfUsers, user => user.age == number)
         }
     }
     else
@@ -191,11 +191,11 @@ function getPercentageOfUsersInSearching(searchValue, users) {
 
         if (!isNaN(number)) {
             if (firstChar === '>')
-                arrayOfUsersOfSearching = users.filter(user => user.age > number)
+                arrayOfUsersOfSearching = _.filter(user => user.age > number)
              else if (firstChar === '<')
-                arrayOfUsersOfSearching = users.filter(user => user.age < number)
+                arrayOfUsersOfSearching = _.filter(users, user => user.age < number)
             else
-                arrayOfUsersOfSearching = users.filter(user => user.age == number)
+                arrayOfUsersOfSearching = _.filter(users, user => user.age == number)
         }
     } else
         arrayOfUsersOfSearching = searchByNameNoteOrAge(searchValue, users)
