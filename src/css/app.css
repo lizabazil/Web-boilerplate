@@ -586,3 +586,9 @@ th:hover {
   position: absolute;
   left: 20px;
 }
+
+#piechart {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}

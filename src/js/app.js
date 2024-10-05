@@ -1,9 +1,8 @@
 /*const testModules = require('./test-module');
 require('../css/app.css');*/
 
-import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge} from "./lab2.js";
+import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge, generateColor} from "./lab2.js";
 import {v4 as uuidv4} from 'https://jspm.dev/uuid';
-
 const allUsersCountries = new Set()
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
     buttonsAddTeacher.forEach(el => el.addEventListener('click', event => {
         openPopup()
     }))
+
+    let pieChartInstance = null
 
     const closePopup = document.getElementById('closePopup')
     const closeDetailedPopup = document.getElementById('closeDetailedPopup')
@@ -296,22 +297,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const daysLeft = nextBirthday.diff(today, 'day');
         dayToBD.textContent = `Days left to next birthday: ${daysLeft}`;
 
-        // TODO: fix
         const buttonShowOnMap = document.getElementById('toggle-map')
         const newButtonShowOnMap = buttonShowOnMap.cloneNode(true)
         buttonShowOnMap.replaceWith(newButtonShowOnMap)
 
         newButtonShowOnMap.addEventListener('click', async function () {
             document.getElementById('map').style.display = 'block'
-            const coordinates = await getCoordinatesByCity(teacher.city, teacher.country);
 
-            if (map !== undefined) {
+            if (map !== undefined)
                 map.remove()
-            }
 
-            if (coordinates) {
-                const latitude = coordinates.latitude;
-                const longitude = coordinates.longitude;
+             const latitude = teacher.coordinates.latitude;
+                const longitude = teacher.coordinates.longitude;
 
                 map = L.map('map').setView([latitude, longitude], 9);
 
@@ -322,23 +319,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 L.marker([latitude, longitude]).addTo(map)
                     .bindPopup(`${teacher.city}, ${teacher.country}`)
                     .openPopup();
-            }
+
         })
 
-    }
-
-    async function getCoordinatesByCity(city, country) {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&format=json`);
-        const data = await response.json();
-
-        if (data.length > 0) {
-            return {
-                latitude: data[0].lat,
-                longitude: data[0].lon
-            };
-        } else {
-            return null;
-        }
     }
 
 
@@ -479,6 +462,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+
     function sortAndUpdateStatisticsTable(currentHeader, changeSortOrder = true) {
         // remove all rows from the table
         const oldRows = tableWithStats.querySelectorAll('tr:not(:first-child)')
@@ -490,6 +475,80 @@ document.addEventListener('DOMContentLoaded', function () {
             sortOrder = currentHeader.getAttribute('data-order')
         } else sortOrder = currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc'
 
+
+        if(pieChartInstance)
+            pieChartInstance.destroy()
+
+        let labels
+        let data
+        // see piechart by country
+        if(currentHeader.getAttribute('data-column') === 'country') {
+            const countryCount = currentTeachers.reduce((acc, teacher) => {
+                const country = teacher.country
+                acc[country] = (acc[country] || 0) + 1
+                return acc
+            }, {})
+
+            labels = Object.keys(countryCount)
+            data = Object.values(countryCount)
+        }
+
+
+        else if(currentHeader.getAttribute('data-column') === 'course') {
+            const course_count = currentTeachers.reduce((acc, teacher) => {
+                const course = teacher.course
+                acc[course] = (acc[course] || 0) + 1
+                return acc
+            }, {})
+
+            labels = Object.keys(course_count)
+            data = Object.values(course_count)
+        }
+
+        else if(currentHeader.getAttribute('data-column') === 'age') {
+            const age_count = currentTeachers.reduce((acc, teacher) => {
+                const age = teacher.age
+                acc[age] = (acc[age] || 0) + 1
+                return acc
+            }, {})
+
+            labels = Object.keys(age_count)
+            data = Object.values(age_count)
+        }
+
+        // TODO: how to deal with it?
+        else if(currentHeader.getAttribute('data-column') === 'full_name') {
+            const full_name_count = currentTeachers.reduce((acc, teacher) => {
+                const full_name = teacher.full_name
+                acc[full_name] = (acc[full_name] || 0) + 1
+                return acc
+            }, {})
+
+            labels = Object.keys(full_name_count)
+            data = Object.values(full_name_count)
+        }
+
+        let colors = []
+        for(let i = 0; i < labels.length; i++)
+            colors.push(generateColor())
+
+
+        const ctx = document.getElementById('piechart').getContext('2d');
+        pieChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels, // countries
+                datasets: [{
+                    data: data, // amount of teachers in each country
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        /*
         // calculations for pagination
         const startIndex = (currentPage - 1) * teachersPerPageTable
         const endIndex = startIndex + teachersPerPageTable
@@ -521,6 +580,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tBody.appendChild(row);
         })
+
+         */
 
     }
 

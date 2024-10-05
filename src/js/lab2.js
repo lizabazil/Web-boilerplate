@@ -10,7 +10,7 @@ function generateUserCourse() {
     return courses[Math.floor((Math.random() * courses.length))]
 }
 
-function generateUserBgColor() {
+export function generateColor() {
     let letters = '0123456789ABCDEF';
     let color = '#';
     for (let i = 0; i < 6; i++) {
@@ -26,7 +26,7 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
         "id": uuidv4(),
         "favorite": false, // generating random True/False
         "course": generateUserCourse(),
-        "bg_color": generateUserBgColor(),
+        "bg_color": generateColor(),
         "note": currentUser.note ? currentUser.note : `Note about ${currentUser.name.first}`,
         "gender": currentUser.gender.charAt(0).toUpperCase().concat(currentUser.gender.slice(1)),
         "title": `${currentUser.name.title}`,
