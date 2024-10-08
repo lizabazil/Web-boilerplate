@@ -25,6 +25,13 @@ body {
   font-weight: bold;
 }
 
+#days-to-bd {
+  color: #ae7361;
+  text-align: left;
+  margin: 0 3%;
+  font-weight: bold;
+}
+
 .detailed-image {
   width: 30%;
   float: left;
@@ -458,6 +465,10 @@ th:hover {
 .prev-next-grid {
   display: flex;
   margin-bottom: 60px;
+}
+
+.pages {
+  display: none;
 }
 
 .popup-overlay {

@@ -468,13 +468,17 @@ document.addEventListener('DOMContentLoaded', function () {
         // remove all rows from the table
         const oldRows = tableWithStats.querySelectorAll('tr:not(:first-child)')
         oldRows.forEach(row => row.remove())
-
+        /*
         const col = currentHeader.getAttribute('data-column')
         let sortOrder = ''
         if (changeSortOrder) {
             sortOrder = currentHeader.getAttribute('data-order')
         } else sortOrder = currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc'
 
+         */
+
+        if(currentHeader === undefined)
+            currentHeader = tableWithStats.querySelectorAll('th')[2]
 
         if(pieChartInstance)
             pieChartInstance.destroy()
@@ -493,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function () {
             data = Object.values(countryCount)
         }
 
-
+        // create piechart by course
         else if(currentHeader.getAttribute('data-column') === 'course') {
             const course_count = currentTeachers.reduce((acc, teacher) => {
                 const course = teacher.course
@@ -505,10 +509,30 @@ document.addEventListener('DOMContentLoaded', function () {
             data = Object.values(course_count)
         }
 
+        // create piechart by age
         else if(currentHeader.getAttribute('data-column') === 'age') {
             const age_count = currentTeachers.reduce((acc, teacher) => {
                 const age = teacher.age
-                acc[age] = (acc[age] || 0) + 1
+
+                let ageGroup
+
+                if (age >= 18 && age <= 20) {
+                    ageGroup = '18-20'
+                } else if (age >= 21 && age <= 30) {
+                    ageGroup = '21-30'
+                } else if (age >= 31 && age <= 40) {
+                    ageGroup = '31-40'
+                } else if (age >= 41 && age <= 50) {
+                    ageGroup = '41-50'
+                } else if (age >= 51 && age <= 60) {
+                    ageGroup = '51-60'
+                } else if (age >= 61 && age <= 70) {
+                    ageGroup = '61-70'
+                } else {
+                    ageGroup = '71+'
+                }
+
+                acc[ageGroup] = (acc[ageGroup] || 0) + 1
                 return acc
             }, {})
 
@@ -516,10 +540,10 @@ document.addEventListener('DOMContentLoaded', function () {
             data = Object.values(age_count)
         }
 
-        // TODO: how to deal with it?
+        // create piechart, value is the first character in full_name of teacher
         else if(currentHeader.getAttribute('data-column') === 'full_name') {
             const full_name_count = currentTeachers.reduce((acc, teacher) => {
-                const full_name = teacher.full_name
+                const full_name = teacher.full_name.charAt(0)
                 acc[full_name] = (acc[full_name] || 0) + 1
                 return acc
             }, {})
@@ -703,12 +727,12 @@ document.addEventListener('DOMContentLoaded', function () {
         })
 
         const teachers = JSON.parse(localStorage.getItem('teachers'))
-        const favoriteTeachers = teachers.filter(teacher => teacher.favorite === true)
+        const favoriteTeachers = _.filter(teachers, teacher => teacher.favorite === true)
 
         // get the needed amount of favorites
-        const visibleTeachers = favoriteTeachers.slice(startIndex, startIndex + maxVisibleTeachers)
+        const visibleTeachers = _.slice(favoriteTeachers, startIndex, startIndex + maxVisibleTeachers)
 
-        visibleTeachers.forEach(teacher => {
+        _.forEach(visibleTeachers, teacher => {
             const card = createTeacherCard(teacher)
             containerWithFavorites.insertBefore(card, moveButtonRight)
 
@@ -733,7 +757,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             createPaginationForTable(mainCurrentHeader)
             sortAndUpdateStatisticsTable(mainCurrentHeader)
-            res.forEach(current => allUsersCountries.add(current.country))
+            _.forEach(res, current => allUsersCountries.add(current.country))
             addCountriesToTheForm()
             }
         )

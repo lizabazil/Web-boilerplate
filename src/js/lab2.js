@@ -52,7 +52,7 @@ export function getFormattedUsers(arrayOfRandomUsers, moreUsers) {
     // join two arrays (formatted array from randomUserMock and additionalUsers)
     let joinedArrays = _.concat(formattedUserMock, moreUsers)
 
-    joinedArrays = joinedArrays.filter((obj, index, self) =>
+    joinedArrays = _.filter(joinedArrays, (obj, index, self) =>
         index === self.findIndex((t) =>
             t.gender === obj.gender && t.title === obj.title && t.full_name === obj.full_name))
     return joinedArrays
@@ -136,13 +136,13 @@ export function sortUsers(arrayOfUsers, sortBy, order='asc') {
 
     else if(sortBy === 'course') {
             return arrayOfUsers.sort( (a, b) =>  {
-                const courseA = a.course === null ? '' : a.course;
-                const courseB = b.course === null ? '' : b.course;
+                const courseA = a.course === null ? '' : a.course
+                const courseB = b.course === null ? '' : b.course
 
                 if (order === 'asc')
-                    return courseA.localeCompare(courseB);
+                    return courseA.localeCompare(courseB)
                  else
-                    return courseB.localeCompare(courseA);
+                    return courseB.localeCompare(courseA)
 
             })
     }
