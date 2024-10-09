@@ -627,6 +627,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function generateCoordinates() {
+        const latitude = (Math.random() * 180 - 90).toFixed(6)
+        const longitude = (Math.random() * 360 - 180).toFixed(6)
+        return {latitude: latitude, longitude: longitude}
+    }
+
 
     // returns true if adding new teacher was successful, otherwise false
     function submitFormAndAddTeacher() {
@@ -655,7 +661,8 @@ document.addEventListener('DOMContentLoaded', function () {
             age: countAge(dateOfBirth),
             state: 'Undefined',
             bg_color: backgroundColor,
-            note: notes
+            note: notes,
+            coordinates: generateCoordinates()
         }
 
         if (validateUser(newTeacher)) {
