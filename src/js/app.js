@@ -487,11 +487,11 @@ document.addEventListener('DOMContentLoaded', function () {
         let data
         // see piechart by country
         if(currentHeader.getAttribute('data-column') === 'country') {
-            const countryCount = currentTeachers.reduce((acc, teacher) => {
+            const countryCount = {}
+            currentTeachers.forEach(teacher => {
                 const country = teacher.country
-                acc[country] = (acc[country] || 0) + 1
-                return acc
-            }, {})
+                countryCount[country] = (countryCount[country] || 0) + 1
+            })
 
             labels = Object.keys(countryCount)
             data = Object.values(countryCount)
@@ -499,21 +499,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // create piechart by course
         else if(currentHeader.getAttribute('data-column') === 'course') {
-            const course_count = currentTeachers.reduce((acc, teacher) => {
+            const courseCount = {}
+            currentTeachers.forEach(teacher => {
                 const course = teacher.course
-                acc[course] = (acc[course] || 0) + 1
-                return acc
-            }, {})
+                courseCount[course] = (courseCount[course] || 0) + 1
+            })
 
-            labels = Object.keys(course_count)
-            data = Object.values(course_count)
+            labels = Object.keys(courseCount)
+            data = Object.values(courseCount)
         }
 
         // create piechart by age
         else if(currentHeader.getAttribute('data-column') === 'age') {
-            const age_count = currentTeachers.reduce((acc, teacher) => {
+            const ageCount = {}
+            currentTeachers.forEach(teacher => {
                 const age = teacher.age
-
                 let ageGroup
 
                 if (age >= 18 && age <= 20) {
@@ -531,25 +531,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     ageGroup = '71+'
                 }
+                ageCount[ageGroup] = (ageCount[ageCount] || 0) + 1
+            })
 
-                acc[ageGroup] = (acc[ageGroup] || 0) + 1
-                return acc
-            }, {})
-
-            labels = Object.keys(age_count)
-            data = Object.values(age_count)
+            labels = Object.keys(ageCount)
+            data = Object.values(ageCount)
         }
 
         // create piechart, value is the first character in full_name of teacher
         else if(currentHeader.getAttribute('data-column') === 'full_name') {
-            const full_name_count = currentTeachers.reduce((acc, teacher) => {
-                const full_name = teacher.full_name.charAt(0)
-                acc[full_name] = (acc[full_name] || 0) + 1
-                return acc
-            }, {})
+            const nameCount = {}
+            currentTeachers.forEach(teacher => {
+                const firstLetter = teacher.full_name.charAt(0)
+                nameCount[firstLetter] = (nameCount[firstLetter] || 0) + 1
+            })
 
-            labels = Object.keys(full_name_count)
-            data = Object.values(full_name_count)
+            labels = Object.keys(nameCount)
+            data = Object.values(nameCount)
         }
 
         let colors = []
