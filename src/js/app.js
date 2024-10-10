@@ -1,9 +1,8 @@
 /*const testModules = require('./test-module');
 require('../css/app.css');*/
 
-import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge} from "./lab2.js";
+import {getFormattedUsers, filterUsers, sortUsers, validateUser, searchByNameNoteOrAge, generateColor} from "./lab2.js";
 import {v4 as uuidv4} from 'https://jspm.dev/uuid';
-
 const allUsersCountries = new Set()
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
     buttonsAddTeacher.forEach(el => el.addEventListener('click', event => {
         openPopup()
     }))
+
+    let pieChartInstance = null
 
     const closePopup = document.getElementById('closePopup')
     const closeDetailedPopup = document.getElementById('closeDetailedPopup')
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // buttons to move the list of favorite teachers
     const moveButtonRight = document.getElementById('move-button-right')
     const moveButtonLeft = document.getElementById('move-button-left')
+
 
     allFilters.forEach(current => {
         current.addEventListener('change', function () {
@@ -128,7 +130,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 phone: card.teacherPhone,
                 favorite: card.teacherFavorite,
                 picture_large: card.photo,
-                note: card.note
+                note: card.note,
+                coordinates: card.coordinates,
+                b_date: card.b_date
 
             }
             openDetailedTeacherPopup(teacherData)
@@ -211,6 +215,9 @@ document.addEventListener('DOMContentLoaded', function () {
         content.classList.remove('blurred')
     }
 
+
+    let map
+
     function openDetailedTeacherPopup(teacher) {
         detailedPopupOverlay.style.display = 'inline-block'
         content.classList.add('blurred')
@@ -277,13 +284,50 @@ document.addEventListener('DOMContentLoaded', function () {
         const teacherNote = document.querySelector('.detailed-part-2')
         teacherNote.textContent = teacher.note
 
-        const address = `${teacher.country}, ${teacher.city}`
-        const googleMapsLink = document.querySelector('.toggle-map')
-        googleMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+        const dayToBD = document.querySelector('#days-to-bd')
+        const b_date = dayjs(teacher.b_date)
+        const today = dayjs()
+        const currentYear = today.year();
+
+        let nextBirthday = b_date.year(currentYear);
+
+        if (nextBirthday.isBefore(today))
+            nextBirthday = nextBirthday.add(1, 'year');
+
+        const daysLeft = nextBirthday.diff(today, 'day');
+        dayToBD.textContent = `Days left to next birthday: ${daysLeft}`;
+
+        const buttonShowOnMap = document.getElementById('toggle-map')
+        const newButtonShowOnMap = buttonShowOnMap.cloneNode(true)
+        buttonShowOnMap.replaceWith(newButtonShowOnMap)
+
+        newButtonShowOnMap.addEventListener('click', async function () {
+            document.getElementById('map').style.display = 'block'
+
+            if (map !== undefined)
+                map.remove()
+
+             const latitude = teacher.coordinates.latitude;
+                const longitude = teacher.coordinates.longitude;
+
+                map = L.map('map').setView([latitude, longitude], 9);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                L.marker([latitude, longitude]).addTo(map)
+                    .bindPopup(`${teacher.city}, ${teacher.country}`)
+                    .openPopup();
+
+        })
+
     }
+
 
     function closeDetailedPopupFunc() {
         detailedPopupOverlay.style.display = 'none'
+        document.getElementById('map').style.display = 'none'
         content.classList.remove('blurred')
     }
 
@@ -372,6 +416,8 @@ document.addEventListener('DOMContentLoaded', function () {
         card.teacherFavorite = teacher.favorite
         card.photo = teacher.picture_large
         card.note = teacher.note
+        card.coordinates = teacher.coordinates
+        card.b_date = teacher.b_date
 
         return card
     }
@@ -416,17 +462,115 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+
     function sortAndUpdateStatisticsTable(currentHeader, changeSortOrder = true) {
         // remove all rows from the table
         const oldRows = tableWithStats.querySelectorAll('tr:not(:first-child)')
         oldRows.forEach(row => row.remove())
-
+        /*
         const col = currentHeader.getAttribute('data-column')
         let sortOrder = ''
         if (changeSortOrder) {
             sortOrder = currentHeader.getAttribute('data-order')
         } else sortOrder = currentHeader.getAttribute('data-order') === 'desc' ? 'asc' : 'desc'
 
+         */
+
+        if(currentHeader === undefined)
+            currentHeader = tableWithStats.querySelectorAll('th')[2]
+
+        if(pieChartInstance)
+            pieChartInstance.destroy()
+
+        let labels
+        let data
+        // see piechart by country
+        if(currentHeader.getAttribute('data-column') === 'country') {
+            const countryCount = {}
+            currentTeachers.forEach(teacher => {
+                const country = teacher.country
+                countryCount[country] = (countryCount[country] || 0) + 1
+            })
+
+            labels = Object.keys(countryCount)
+            data = Object.values(countryCount)
+        }
+
+        // create piechart by course
+        else if(currentHeader.getAttribute('data-column') === 'course') {
+            const courseCount = {}
+            currentTeachers.forEach(teacher => {
+                const course = teacher.course
+                courseCount[course] = (courseCount[course] || 0) + 1
+            })
+
+            labels = Object.keys(courseCount)
+            data = Object.values(courseCount)
+        }
+
+        // create piechart by age
+        else if(currentHeader.getAttribute('data-column') === 'age') {
+            const ageCount = {}
+            currentTeachers.forEach(teacher => {
+                const age = teacher.age
+                let ageGroup
+
+                if (age >= 18 && age <= 20) {
+                    ageGroup = '18-20'
+                } else if (age >= 21 && age <= 30) {
+                    ageGroup = '21-30'
+                } else if (age >= 31 && age <= 40) {
+                    ageGroup = '31-40'
+                } else if (age >= 41 && age <= 50) {
+                    ageGroup = '41-50'
+                } else if (age >= 51 && age <= 60) {
+                    ageGroup = '51-60'
+                } else if (age >= 61 && age <= 70) {
+                    ageGroup = '61-70'
+                } else {
+                    ageGroup = '71+'
+                }
+                ageCount[ageGroup] = (ageCount[ageCount] || 0) + 1
+            })
+
+            labels = Object.keys(ageCount)
+            data = Object.values(ageCount)
+        }
+
+        // create piechart, value is the first character in full_name of teacher
+        else if(currentHeader.getAttribute('data-column') === 'full_name') {
+            const nameCount = {}
+            currentTeachers.forEach(teacher => {
+                const firstLetter = teacher.full_name.charAt(0)
+                nameCount[firstLetter] = (nameCount[firstLetter] || 0) + 1
+            })
+
+            labels = Object.keys(nameCount)
+            data = Object.values(nameCount)
+        }
+
+        let colors = []
+        for(let i = 0; i < labels.length; i++)
+            colors.push(generateColor())
+
+
+        const ctx = document.getElementById('piechart').getContext('2d');
+        pieChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels, // countries
+                datasets: [{
+                    data: data, // amount of teachers in each country
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        /*
         // calculations for pagination
         const startIndex = (currentPage - 1) * teachersPerPageTable
         const endIndex = startIndex + teachersPerPageTable
@@ -459,6 +603,8 @@ document.addEventListener('DOMContentLoaded', function () {
             tBody.appendChild(row);
         })
 
+         */
+
     }
 
 
@@ -477,6 +623,12 @@ document.addEventListener('DOMContentLoaded', function () {
         while (container.firstChild) {
             container.removeChild(container.firstChild)
         }
+    }
+
+    function generateCoordinates() {
+        const latitude = (Math.random() * 180 - 90).toFixed(6)
+        const longitude = (Math.random() * 360 - 180).toFixed(6)
+        return {latitude: latitude, longitude: longitude}
     }
 
 
@@ -507,7 +659,8 @@ document.addEventListener('DOMContentLoaded', function () {
             age: countAge(dateOfBirth),
             state: 'Undefined',
             bg_color: backgroundColor,
-            note: notes
+            note: notes,
+            coordinates: generateCoordinates()
         }
 
         if (validateUser(newTeacher)) {
@@ -579,12 +732,12 @@ document.addEventListener('DOMContentLoaded', function () {
         })
 
         const teachers = JSON.parse(localStorage.getItem('teachers'))
-        const favoriteTeachers = teachers.filter(teacher => teacher.favorite === true)
+        const favoriteTeachers = _.filter(teachers, teacher => teacher.favorite === true)
 
         // get the needed amount of favorites
-        const visibleTeachers = favoriteTeachers.slice(startIndex, startIndex + maxVisibleTeachers)
+        const visibleTeachers = _.slice(favoriteTeachers, startIndex, startIndex + maxVisibleTeachers)
 
-        visibleTeachers.forEach(teacher => {
+        _.forEach(visibleTeachers, teacher => {
             const card = createTeacherCard(teacher)
             containerWithFavorites.insertBefore(card, moveButtonRight)
 
@@ -609,7 +762,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             createPaginationForTable(mainCurrentHeader)
             sortAndUpdateStatisticsTable(mainCurrentHeader)
-            res.forEach(current => allUsersCountries.add(current.country))
+            _.forEach(res, current => allUsersCountries.add(current.country))
             addCountriesToTheForm()
             }
         )

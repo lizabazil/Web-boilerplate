@@ -2,6 +2,12 @@
 <html lang="en">
 
 <head itemscope itemtype="http://schema.org/WebSite">
+   <script src="https://unpkg.com/dayjs"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
    <meta charset="utf-8">
    <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -99,6 +105,7 @@
          <th data-column="country" data-order="desc">Country <p class="line-to-bottom">↓</p></th>
       </tr>
    </table>
+      <canvas id="piechart"></canvas>
 
 
    <nav class="pages">
@@ -264,7 +271,9 @@
 
 
             </div>
-            <p><a class="toggle-map" target="_blank">show on the map</a> </p>
+            <p id="days-to-bd"></p>
+            <div id="map"></div>
+            <p><button id="toggle-map">show on the map</button> </p>
 
          </div>
 
@@ -280,6 +289,8 @@
 
 <script type="module" src="js/app.js">
 </script>
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
 </body>
 </html>
